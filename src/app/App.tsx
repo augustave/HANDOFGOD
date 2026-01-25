@@ -28,6 +28,14 @@ import { CommandDock } from "@/app/components/command-dock";
 import { ShareCardComposer } from "@/app/components/share-card-composer";
 import { SystemCard } from "@/app/components/system-card";
 
+import { EvidenceWall } from "@/app/components/evidence-wall";
+import { PostureTerminal } from "@/app/components/posture-terminal";
+import { BootSequence } from "@/app/components/boot-sequence";
+import { CommandPalette } from "@/app/components/command-palette";
+import { CaptureSimulator } from "@/app/components/capture-simulator";
+import { SubliminalFeed } from "@/app/components/subliminal-feed";
+import { SovereignKeyGenerator } from "@/app/components/sovereign-key-generator";
+
 // --- App ---
 
 export default function App() {
@@ -41,6 +49,8 @@ export default function App() {
   const [role, setRole] = useState<"ANALYST" | "OPERATOR" | "COMMANDER">("ANALYST");
   const [shareText, setShareText] = useState("");
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [showBoot, setShowBoot] = useState(true);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   
   const { scrollYProgress } = useScroll();
   const [scrollPerc, setScrollPerc] = useState(0);
@@ -52,7 +62,14 @@ export default function App() {
       const utterance = new SpeechSynthesisUtterance(`Initiating briefing for ${act.title}. Status: ${role}. Secure core active.`);
       utterance.rate = 0.9;
       utterance.pitch = 0.8;
+      
+      // Add a bit of robotic glitch to the start
+      const glitch = new SpeechSynthesisUtterance("Glitch. Glitch. Glitch.");
+      glitch.rate = 4;
+      glitch.volume = 0.2;
+
       window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(glitch);
       window.speechSynthesis.speak(utterance);
     }
   }, [activeAct, isAudioMode, role]);
@@ -78,6 +95,17 @@ export default function App() {
     { asset: "Applied Epistemology", surface: "Mental Models", failure: "Capability Gap", controls: "Literacy Nodes", metric: "Outcome" },
     { asset: "Sovereign Wake", surface: "Conscious Action", failure: "Inertia", controls: "Willful Operation", metric: "Post-Trance Exit" },
   ];
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -133,6 +161,7 @@ export default function App() {
                 <p>
                   The first rule of the new world is this: <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>Legibility is a weapon</RedactionInline>. If a system is designed to be invisible, it is designed to be unaccountable. We were told that the internet would democratize information, but it instead industrialized capture.
                 </p>
+                <EvidenceWall />
                 <p>
                   What we call "morality" in the digital sphere is often just a set of <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>unilateral constraints</RedactionInline> that only the honest follow. This creates a massive, unmonitored surface area for bad actors to exploit.
                 </p>
@@ -143,9 +172,6 @@ export default function App() {
                   threat="Social engineering of internal validators using moral imperatives."
                   implication="Total loss of infrastructure neutrality within 18 months."
                 />
-                <p>
-                  Neutrality is a mask worn by the hegemon. By claiming to be "just a platform," the builder reserves the right to shape the flow of human consciousness without ever standing for a vote.
-                </p>
               </>
             )}
             {completedActs.includes(1) && <Stamp text="VERIFIED" rotated={-5} />}
@@ -176,6 +202,7 @@ export default function App() {
                 <p>
                   Authenticity cannot be faked, but it can be <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>harvested</RedactionInline>. The modern attention economy is a giant combine harvester, stripping the meaning from genuine human connection and turning it into engagement metrics.
                 </p>
+                <CaptureSimulator />
                 <ExhibitCard 
                   id="02"
                   title="ATTENTION_LOOP_VULNERABILITY"
@@ -240,6 +267,7 @@ export default function App() {
                 <p>
                   Sovereignty is the ability to say "No" to the network. It is the capacity to operate <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>out of band</RedactionInline> when the primary channels are compromised.
                 </p>
+                <SovereignKeyGenerator />
               </>
             )}
             {completedActs.includes(4) && <Stamp text="SOVEREIGN" rotated={-10} />}
@@ -305,6 +333,17 @@ export default function App() {
             )}
           </div>
         );
+      case 7:
+        return (
+          <div className="space-y-16">
+            <div className="prose prose-2xl max-w-none opacity-95 leading-relaxed font-serif text-ink-black/90 text-center">
+              <p className="text-2xl font-medium max-w-2xl mx-auto italic opacity-80 text-ink-black">
+                The trance is a choice. The wake is a responsibility. Choose your posture.
+              </p>
+            </div>
+            <PostureTerminal />
+          </div>
+        );
       default:
         return null;
     }
@@ -316,12 +355,29 @@ export default function App() {
       isWoke ? "bg-white text-ink-black grayscale-0 contrast-125" : "bg-substrate-paper text-ink-black",
       plainTextMode ? "font-sans" : "font-serif"
     )}>
+      <AnimatePresence>
+        {showBoot && <BootSequence onComplete={() => setShowBoot(false)} />}
+      </AnimatePresence>
+
       {!isWoke && (
         <div className="contents">
           <div className="fixed inset-0 pointer-events-none opacity-[0.06] bg-[url('https://www.transparenttextures.com/patterns/paper-fibers.png')] z-50 mix-blend-multiply" />
           <div className="fixed inset-0 pointer-events-none opacity-[0.02] bg-[url('https://www.transparenttextures.com/patterns/dust.png')] z-50" />
+          <div className="fixed inset-0 pointer-events-none z-[1000] opacity-[0.03] overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent h-1 animate-scanline pointer-events-none" />
+          </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes scanline {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100vh); }
+        }
+        .animate-scanline {
+          animation: scanline 10s linear infinite;
+        }
+      `}</style>
 
       {!plainTextMode && (
         <div className="fixed left-2 top-0 bottom-0 flex flex-col justify-around py-20 pointer-events-none z-[60] opacity-20">
@@ -344,10 +400,13 @@ export default function App() {
             <span>20.01.2026</span>
           </div>
         </div>
-        <div className="hidden lg:flex items-center gap-4 font-mono text-[9px] font-black uppercase tracking-widest text-gray-400">
+        <button 
+          onClick={() => setIsPaletteOpen(true)}
+          className="hidden lg:flex items-center gap-4 font-mono text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-ink-black transition-colors bg-transparent border-none cursor-pointer"
+        >
           <Search className="w-3 h-3" />
           <span>CMD+K TO SEARCH_DOSSIER</span>
-        </div>
+        </button>
       </header>
 
       <main className="max-w-7xl mx-auto px-10 md:px-24 pt-48 pb-64 grid lg:grid-cols-[1fr_340px] gap-20">
@@ -379,7 +438,7 @@ export default function App() {
             </div>
           </section>
 
-          {acts.slice(1, -1).map((act, idx) => (
+          {acts.slice(1).map((act, idx) => (
             <section key={act.id} id={`act-${act.id}`} data-act-idx={idx + 1} className="scroll-mt-48">
               <TornEdge />
               <div className="max-w-4xl mx-auto space-y-12">
@@ -389,58 +448,29 @@ export default function App() {
                 <h2 className="text-6xl md:text-8xl font-black mb-16 tracking-tighter uppercase leading-[0.85] text-ink-black">
                   {act.title.split(' ').map((w, i) => i === act.title.split(' ').length - 1 ? <span key={i} className="text-star-gold italic underline decoration-stamp-red/30 decoration-wavy underline-offset-8">{w}</span> : w + ' ')}
                 </h2>
-                <BriefingBox items={[
-                  `Identify the primary ${systemCardStates[idx+1].surface} vulnerability.`,
-                  `Deploy ${systemCardStates[idx+1].controls} to mitigate ${systemCardStates[idx+1].failure}.`,
-                  `Audit the system via the ${systemCardStates[idx+1].metric} benchmark.`
-                ]} />
+                {idx + 1 < acts.length - 1 && (
+                  <BriefingBox items={[
+                    `Identify the primary ${systemCardStates[idx+1].surface} vulnerability.`,
+                    `Deploy ${systemCardStates[idx+1].controls} to mitigate ${systemCardStates[idx+1].failure}.`,
+                    `Audit the system via the ${systemCardStates[idx+1].metric} benchmark.`
+                  ]} />
+                )}
                 {renderActContent(idx + 1)}
               </div>
             </section>
           ))}
-
-          {/* Act 7: Final */}
-          <section id="act-final" data-act-idx={7} className="scroll-mt-48 pb-64">
-            <TornEdge />
-            <div className="max-w-4xl mx-auto text-center space-y-12">
-              <h2 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.85] text-ink-black">
-                Operate <br />
-                <span className="text-stamp-red">on Wake</span>
-              </h2>
-              <p className="text-2xl font-medium max-w-2xl mx-auto italic opacity-80 text-ink-black">
-                The trance is a choice. The wake is a responsibility. Choose your posture.
-              </p>
-              
-              <div className="grid md:grid-cols-3 gap-8 text-left py-12">
-                <div className="p-8 border-2 border-ink-black bg-white hover:shadow-[12px_12px_0px_var(--stamp-red)] transition-all group">
-                  <div className="font-mono text-[9px] font-black uppercase tracking-widest text-gray-400 mb-4">POSTURE_01</div>
-                  <h4 className="font-black text-xl mb-4 uppercase">The Watcher</h4>
-                  <p className="font-serif text-sm opacity-70 italic">Monitor the drift without interference. Map the decay before it reaches the core.</p>
-                </div>
-                <div className="p-8 border-2 border-ink-black bg-white hover:shadow-[12px_12px_0px_var(--star-gold)] transition-all group">
-                  <div className="font-mono text-[9px] font-black uppercase tracking-widest text-gray-400 mb-4">POSTURE_02</div>
-                  <h4 className="font-black text-xl mb-4 uppercase">The Architect</h4>
-                  <p className="font-serif text-sm opacity-70 italic">Build parallel stacks. Ensure sovereignty through technical redundancy and literacy.</p>
-                </div>
-                <div className="p-8 border-2 border-ink-black bg-white hover:shadow-[12px_12px_0px_var(--dossier-blue)] transition-all group">
-                  <div className="font-mono text-[9px] font-black uppercase tracking-widest text-gray-400 mb-4">POSTURE_03</div>
-                  <h4 className="font-black text-xl mb-4 uppercase">The Sovereign</h4>
-                  <p className="font-serif text-sm opacity-70 italic">Operate out-of-band. Lead the exit from the trance through conscious action.</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col items-center gap-8 pt-12">
-                <button className="px-12 py-6 bg-ink-black text-white font-mono font-black text-sm uppercase tracking-[0.5em] hover:bg-stamp-red transition-all shadow-[12px_12px_0px_var(--star-gold)] active:translate-x-1 active:translate-y-1 active:shadow-none group cursor-pointer border-none">
-                  <span className="flex items-center gap-4">
-                    FINALIZE_REPORT <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-                  </span>
-                </button>
-                <div className="font-mono text-[10px] text-gray-400 uppercase tracking-widest">
-                  END_OF_TRANSMISSION // HAND_OF_GOD // 2026
-                </div>
-              </div>
+          
+          <footer className="pt-32 pb-64 text-center space-y-8">
+            <div className="w-px h-24 bg-ink-black/20 mx-auto" />
+            <div className="font-mono text-[10px] text-gray-400 uppercase tracking-[0.5em]">
+              END_OF_TRANSMISSION // HAND_OF_GOD // 2026
             </div>
-          </section>
+            <div className="flex justify-center gap-12 opacity-30 grayscale hover:grayscale-0 transition-all">
+              <div className="w-12 h-12 bg-ink-black/10 rounded-full" />
+              <div className="w-12 h-12 bg-ink-black/10 rounded-full" />
+              <div className="w-12 h-12 bg-ink-black/10 rounded-full" />
+            </div>
+          </footer>
         </div>
 
         {!isFocusMode && (
@@ -474,10 +504,22 @@ export default function App() {
         setIsShareOpen(true);
       }} />
 
+      <SubliminalFeed isActive={isAudioMode} />
+
       <ShareCardComposer 
         text={shareText} 
         isOpen={isShareOpen} 
         onClose={() => setIsShareOpen(false)} 
+      />
+
+      <CommandPalette 
+        isOpen={isPaletteOpen}
+        onClose={() => setIsPaletteOpen(false)}
+        acts={acts}
+        onNavigate={(id) => {
+          const el = document.getElementById(`act-${id}`);
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        }}
       />
     </div>
   );
