@@ -186,3 +186,93 @@
     line-height: 1.5;
   }
 }
+
+@layer utilities {
+  .paper-fiber-overlay {
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(17, 17, 17, 0.18) 0 1px, transparent 1px),
+      radial-gradient(circle at 80% 30%, rgba(17, 17, 17, 0.12) 0 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17, 17, 17, 0.08) 1px, transparent 1px);
+    background-size: 27px 31px, 43px 37px, 18px 100%;
+  }
+
+  .dust-overlay {
+    background-image:
+      radial-gradient(circle, rgba(17, 17, 17, 0.55) 0 0.8px, transparent 1px),
+      radial-gradient(circle, rgba(176, 31, 46, 0.35) 0 0.7px, transparent 1px);
+    background-size: 19px 23px, 31px 29px;
+  }
+
+  .graph-overlay {
+    background-image:
+      linear-gradient(rgba(17, 17, 17, 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(17, 17, 17, 0.35) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .grain-overlay {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background-image: radial-gradient(circle, rgba(17, 17, 17, 0.8) 0 0.6px, transparent 0.8px);
+    background-size: 17px 17px;
+    opacity: 0.04;
+    mix-blend-mode: multiply;
+  }
+
+  .animate-scanline {
+    animation: scanline 10s linear infinite;
+  }
+
+  .animate-scanline-fast {
+    animation: scanline 2s linear infinite;
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@media print {
+  header,
+  nav,
+  aside,
+  .grain-overlay,
+  .paper-fiber-overlay,
+  .dust-overlay,
+  [aria-label='Dossier act tabs'] {
+    display: none !important;
+  }
+
+  main {
+    display: block !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Zap, Maximize2 } from "lucide-react";
-import { cn } from "@/app/components/dossier-components";
+import { cn } from "./dossier-components";
 
 export const TwoFrontSimulator = () => {
   const [techVal, setTechVal] = useState(45);
@@ -35,7 +35,7 @@ export const TwoFrontSimulator = () => {
 
   return (
     <div className="my-16 p-8 md:p-12 bg-white border-2 border-ink-black shadow-[16px_16px_0px_var(--dossier-blue)] relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/graphy.png')]" />
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none graph-overlay" />
       <div className="flex justify-between items-center mb-10 border-b-2 border-ink-black/10 pb-6 relative z-10">
         <h3 className="font-mono font-black flex items-center gap-3 text-sm uppercase tracking-[0.3em]">
           <Zap className="w-6 h-6 text-star-gold" /> TACTICAL_SIMULATOR_V4.2
@@ -51,6 +51,7 @@ export const TwoFrontSimulator = () => {
               <span className="text-dossier-blue">{techVal}%</span>
             </div>
             <input 
+              aria-label="Technical defense level"
               type="range" 
               className="w-full h-1.5 bg-gray-200 appearance-none cursor-pointer accent-dossier-blue rounded-full" 
               value={techVal} 
@@ -67,6 +68,7 @@ export const TwoFrontSimulator = () => {
               <span className="text-star-gold">{narrativeVal}%</span>
             </div>
             <input 
+              aria-label="Narrative resilience"
               type="range" 
               className="w-full h-1.5 bg-gray-200 appearance-none cursor-pointer accent-star-gold rounded-full" 
               value={narrativeVal} 

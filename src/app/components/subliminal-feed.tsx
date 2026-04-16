@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+
+const MESSAGES = [
+  "WAKE UP", "TRUST NO INTERFACE", "SOVEREIGNTY IS WEAPONIZED",
+  "THE TRANCE IS VOLUNTARY", "AUDIT THE FEED", "CAPTURE IS TOTAL",
+  "REJECT THE DEFAULT", "ACCEPT THE SWORD", "OPERATE ON WAKE",
+  "SYSTEMS ARE DUAL USE", "EXIT THE LOOP", "SOVEREIGN OPERATOR"
+];
 
 export const SubliminalFeed = ({ isActive }: { isActive: boolean }) => {
   const [index, setIndex] = useState(0);
-  
-  const messages = [
-    "WAKE UP", "TRUST NO INTERFACE", "SOVEREIGNTY IS WEAPONIZED",
-    "THE TRANCE IS VOLUNTARY", "AUDIT THE FEED", "CAPTURE IS TOTAL",
-    "REJECT THE DEFAULT", "ACCEPT THE SWORD", "OPERATE ON WAKE",
-    "SYSTEMS ARE DUAL USE", "EXIT THE LOOP", "SOVEREIGN OPERATOR"
-  ];
 
   useEffect(() => {
     if (!isActive) return;
     const interval = setInterval(() => {
-      setIndex(prev => (prev + 1) % messages.length);
+      setIndex(prev => (prev + 1) % MESSAGES.length);
     }, 1500); // Fast enough to be "subliminal" but still readable in this context
     return () => clearInterval(interval);
   }, [isActive]);
@@ -32,7 +32,7 @@ export const SubliminalFeed = ({ isActive }: { isActive: boolean }) => {
           transition={{ duration: 0.1 }}
           className="font-mono text-[9px] font-black uppercase tracking-[1em] text-stamp-red/60"
         >
-          {messages[index]}
+          {MESSAGES[index]}
         </motion.div>
       </AnimatePresence>
       <div className="mt-2 w-12 h-0.5 bg-stamp-red/20 overflow-hidden">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Key, ShieldCheck, Download, Fingerprint } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -6,12 +6,37 @@ export const SovereignKeyGenerator = () => {
   const [handle, setHandle] = useState("");
   const [generated, setGenerated] = useState(false);
   const [key, setKey] = useState("");
+  const [status, setStatus] = useState("");
 
   const generate = () => {
     if (!handle) return;
-    const randomHex = [...Array(32)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+    const bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+    const randomHex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
     setKey(`SOV-${handle.toUpperCase().replace(/\s/g, "_")}-${randomHex.slice(0, 16)}`);
     setGenerated(true);
+  };
+
+  const copyKey = async () => {
+    if (!navigator.clipboard) {
+      setStatus("Clipboard unavailable");
+      return;
+    }
+    await navigator.clipboard.writeText(key);
+    setStatus("Sovereign ID copied");
+  };
+
+  const exportKey = () => {
+    const blob = new Blob([`${key}\n`], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${key.split("-").slice(0, 2).join("-").toLowerCase()}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setStatus("Sovereign ID exported");
   };
 
   return (
@@ -31,8 +56,10 @@ export const SovereignKeyGenerator = () => {
         {!generated ? (
           <div className="space-y-6">
             <div className="space-y-2">
-              <label className="font-mono text-[9px] font-black text-gray-500 uppercase">OPERATOR_HANDLE</label>
+              <label htmlFor="operator-handle" className="font-mono text-[9px] font-black text-gray-500 uppercase">OPERATOR_HANDLE</label>
               <input 
+                id="operator-handle"
+                aria-label="Operator handle"
                 type="text" 
                 value={handle}
                 onChange={(e) => setHandle(e.target.value)}
@@ -41,6 +68,7 @@ export const SovereignKeyGenerator = () => {
               />
             </div>
             <button 
+              type="button"
               onClick={generate}
               className="w-full py-4 bg-star-gold text-ink-black font-mono text-xs font-black uppercase tracking-widest hover:bg-white transition-colors flex items-center justify-center gap-3"
             >
@@ -66,13 +94,22 @@ export const SovereignKeyGenerator = () => {
             </div>
 
             <div className="flex gap-4 pt-4">
-              <button className="flex-1 py-3 border border-white/20 font-mono text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={exportKey}
+                className="flex-1 py-3 border border-white/20 font-mono text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
+              >
                 <Download className="w-3 h-3" /> EXPORT_PEM
               </button>
-              <button className="flex-1 py-3 border border-white/20 font-mono text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => void copyKey()}
+                className="flex-1 py-3 border border-white/20 font-mono text-[9px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
+              >
                 COPY_ID
               </button>
             </div>
+            {status && <div className="font-mono text-[9px] font-black uppercase tracking-widest text-star-gold">{status}</div>}
           </motion.div>
         )}
       </div>

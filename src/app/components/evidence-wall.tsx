@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Info, Link as LinkIcon, X } from "lucide-react";
-import { cn } from "@/app/components/dossier-components";
+import { cn } from "./dossier-components";
 
 interface EvidenceItem {
   id: string;
@@ -24,6 +24,15 @@ const evidence: EvidenceItem[] = [
 export function EvidenceWall() {
   const [selected, setSelected] = useState<EvidenceItem | null>(null);
 
+  useEffect(() => {
+    if (!selected) return undefined;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selected]);
+
   return (
     <div className="relative w-full h-[600px] bg-ink-black/5 border-4 border-ink-black/10 overflow-hidden my-12 group">
       {/* Grid Pattern */}
@@ -38,10 +47,12 @@ export function EvidenceWall() {
       </svg>
 
       {evidence.map((item) => (
-        <motion.div
+        <motion.button
+          type="button"
           key={item.id}
+          aria-label={`Open evidence file ${item.id}: ${item.title}`}
           className={cn(
-            "absolute cursor-pointer hover:z-50 transition-shadow",
+            "absolute cursor-pointer hover:z-50 transition-shadow text-left",
             item.type === "photo" ? "bg-white p-2 shadow-xl" : "bg-tape-beige/80 p-4 shadow-lg border border-ink-black/10"
           )}
           style={{ 
@@ -65,7 +76,7 @@ export function EvidenceWall() {
             </div>
           )}
           <h4 className="font-mono text-[10px] font-black uppercase tracking-tight truncate">{item.title}</h4>
-        </motion.div>
+        </motion.button>
       ))}
 
       <AnimatePresence>
@@ -75,6 +86,9 @@ export function EvidenceWall() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-ink-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-12"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Evidence file ${selected.id}`}
           >
             <motion.div 
               initial={{ scale: 0.9, y: 20 }}
@@ -82,8 +96,10 @@ export function EvidenceWall() {
               className="bg-substrate-paper max-w-lg w-full p-10 relative border-4 border-ink-black"
             >
               <button 
+                type="button"
                 onClick={() => setSelected(null)}
                 className="absolute top-4 right-4 p-2 hover:bg-ink-black/5 rounded-full"
+                aria-label="Close evidence file"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -100,6 +116,7 @@ export function EvidenceWall() {
               <div className="pt-6 border-t border-ink-black/10 flex justify-between items-center">
                 <div className="font-mono text-[10px] font-bold text-gray-400">STATUS: DECLASSIFIED</div>
                 <button 
+                  type="button"
                   onClick={() => setSelected(null)}
                   className="font-mono text-[10px] font-black uppercase tracking-widest bg-ink-black text-white px-4 py-2"
                 >

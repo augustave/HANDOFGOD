@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Maximize2, Minimize2, FileText, ShieldAlert, Zap } from "lucide-react";
-import { cn } from "@/app/components/dossier-components";
+import { cn } from "./dossier-components";
 
 interface ExhibitProps {
   id: string;
@@ -24,16 +24,18 @@ export const ExhibitCard = ({ id, title, source, threat, implication, metadata }
 
   return (
     <div className="my-12 border-2 border-ink-black/20 bg-white shadow-[8px_8px_0px_rgba(0,0,0,0.05)] overflow-hidden">
-      <div 
+      <button
+        type="button"
         className="flex items-center justify-between px-6 py-4 bg-ink-black text-white cursor-pointer group"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
       >
         <div className="flex items-center gap-4">
           <div className="font-mono text-[10px] bg-stamp-red px-2 py-0.5 font-black">EXHIBIT_{id}</div>
           <h4 className="font-mono text-xs font-black uppercase tracking-[0.2em] group-hover:text-star-gold transition-colors">{title}</h4>
         </div>
         {isOpen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-      </div>
+      </button>
 
       <AnimatePresence>
         {isOpen && (
@@ -47,6 +49,7 @@ export const ExhibitCard = ({ id, title, source, threat, implication, metadata }
               <div className="flex border-b border-ink-black/10">
                 {tabs.map((tab) => (
                   <button
+                    type="button"
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(

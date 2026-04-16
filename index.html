@@ -1,15 +1,37 @@
 
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Interactive Dossier Webapp</title>
-    </head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="HAND_OF_GOD is an interactive declassified dossier exploring dual-use infrastructure, narrative capture, and sovereign operator posture."
+    />
+    <meta name="theme-color" content="#111111" />
+    <meta property="og:title" content="HAND_OF_GOD: The Case File" />
+    <meta
+      property="og:description"
+      content="A high-fidelity theatre-of-evidence web experience across eight operational acts."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>HAND_OF_GOD: The Case File</title>
+    <style>
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
 
-    <body>
-      <div id="root"></div>
-      <script type="module" src="/src/main.tsx"></script>
-    </body>
-  </html>
-  
+      #root {
+        min-height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

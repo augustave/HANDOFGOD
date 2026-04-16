@@ -1,22 +1,23 @@
 import React from "react";
 import { motion } from "motion/react";
 import { Star } from "lucide-react";
-import { cn } from "@/app/components/dossier-components";
+import { cn } from "./dossier-components";
 
 interface NavProps {
   acts: { id: string; title: string; code: string }[];
   activeAct: number;
   scrollPerc: number;
+  reducedMotion?: boolean;
 }
 
-export const StarRailNav = ({ acts, activeAct, scrollPerc }: NavProps) => {
+export const StarRailNav = ({ acts, activeAct, scrollPerc, reducedMotion = false }: NavProps) => {
   return (
     <nav className="fixed left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-8 z-40 hidden lg:flex">
       <div className="w-px h-16 bg-ink-black/20" />
       {acts.map((act, idx) => (
         <a key={act.id} href={`#act-${act.id}`} className="group relative">
           <motion.div
-            animate={{ 
+            animate={reducedMotion ? undefined : { 
               scale: activeAct === idx ? 1.5 : 1,
               color: activeAct === idx ? "var(--star-gold)" : "var(--ink-black)"
             }}

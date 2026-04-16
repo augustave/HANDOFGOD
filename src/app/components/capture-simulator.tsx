@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ShieldAlert, Activity, Filter, Zap, RefreshCw } from "lucide-react";
-import { cn } from "@/app/components/dossier-components";
+import { ShieldAlert, Filter, Zap, RefreshCw } from "lucide-react";
+import { cn } from "./dossier-components";
 
 export const CaptureSimulator = () => {
   const [drift, setDrift] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
   const [detectedNodes, setDetectedNodes] = useState<string[]>([]);
   const [mitigated, setMitigated] = useState(0);
+  const scanCountRef = useRef(0);
+  const scanTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const nodes = [
     "Dopamine_Loop_04", "Algorithmic_Bias_A9", "Predictive_Nudge_88", 
@@ -21,12 +23,20 @@ export const CaptureSimulator = () => {
     return () => clearInterval(interval);
   }, [isScanning]);
 
+  useEffect(() => {
+    return () => {
+      if (scanTimeoutRef.current) clearTimeout(scanTimeoutRef.current);
+    };
+  }, []);
+
   const scan = () => {
     setIsScanning(true);
-    setTimeout(() => {
-      const newNode = nodes[Math.floor(Math.random() * nodes.length)];
+    scanTimeoutRef.current = setTimeout(() => {
+      const newNode = nodes[scanCountRef.current % nodes.length];
+      scanCountRef.current += 1;
       setDetectedNodes(prev => [newNode, ...prev].slice(0, 3));
       setIsScanning(false);
+      scanTimeoutRef.current = null;
     }, 2000);
   };
 
@@ -68,6 +78,7 @@ export const CaptureSimulator = () => {
           </div>
 
           <button 
+            type="button"
             onClick={scan}
             disabled={isScanning}
             className="w-full py-4 bg-ink-black text-white font-mono text-xs font-black uppercase tracking-widest hover:bg-dossier-blue transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
@@ -99,7 +110,9 @@ export const CaptureSimulator = () => {
                   >
                     <span className="font-mono text-[11px] font-black uppercase tracking-tighter">{node}</span>
                     <button 
+                      type="button"
                       onClick={() => mitigate(node)}
+                      aria-label={`Mitigate ${node}`}
                       className="p-1 hover:text-stamp-red transition-colors"
                     >
                       <Zap className="w-4 h-4" />

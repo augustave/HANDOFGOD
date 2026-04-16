@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Terminal, CheckCircle2, Download, Copy } from "lucide-react";
-import { cn } from "@/app/components/dossier-components";
+import { cn } from "./dossier-components";
 
 export const InterfaceChecklist = () => {
   const [items, setItems] = useState([
@@ -10,9 +10,21 @@ export const InterfaceChecklist = () => {
     { id: 4, text: "Establish protocol-level transparency logs", checked: false },
     { id: 5, text: "Draft literacy plan for secondary operators", checked: false },
   ]);
+  const [status, setStatus] = useState("");
 
   const toggle = (id: number) => {
     setItems(items.map(item => item.id === id ? { ...item, checked: !item.checked } : item));
+  };
+
+  const checklistText = items.map((item) => `${item.checked ? "[x]" : "[ ]"} ${item.text}`).join("\n");
+
+  const copyChecklist = async () => {
+    if (!navigator.clipboard) {
+      setStatus("Clipboard unavailable");
+      return;
+    }
+    await navigator.clipboard.writeText(checklistText);
+    setStatus("Checklist copied");
   };
 
   return (
@@ -28,10 +40,12 @@ export const InterfaceChecklist = () => {
       </div>
       <div className="space-y-6 relative z-10">
         {items.map(item => (
-          <div 
+          <button
+            type="button"
             key={item.id} 
             onClick={() => toggle(item.id)}
-            className="flex items-center gap-6 cursor-pointer group"
+            aria-pressed={item.checked}
+            className="flex items-center gap-6 cursor-pointer group text-left bg-transparent border-0 p-0 w-full text-white"
           >
             <div className={cn(
               "w-6 h-6 border-2 flex items-center justify-center transition-all duration-300",
@@ -45,14 +59,23 @@ export const InterfaceChecklist = () => {
             )}>
               {item.text}
             </span>
-          </div>
+          </button>
         ))}
       </div>
+      {status && <div className="font-mono text-[10px] font-black uppercase tracking-widest text-star-gold">{status}</div>}
       <div className="pt-8 flex flex-wrap gap-8 relative z-10">
-        <button className="flex items-center gap-3 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-star-gold hover:text-white transition-colors group bg-transparent border-none cursor-pointer">
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="flex items-center gap-3 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-star-gold hover:text-white transition-colors group bg-transparent border-none cursor-pointer"
+        >
           <Download className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" /> EXPORT_PLAN.PDF
         </button>
-        <button className="flex items-center gap-3 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-star-gold hover:text-white transition-colors group bg-transparent border-none cursor-pointer">
+        <button
+          type="button"
+          onClick={() => void copyChecklist()}
+          className="flex items-center gap-3 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-star-gold hover:text-white transition-colors group bg-transparent border-none cursor-pointer"
+        >
           <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" /> COPY_SHARE_LINK
         </button>
       </div>

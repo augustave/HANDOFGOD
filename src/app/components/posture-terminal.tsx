@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Terminal, Shield, Eye, Zap, CheckCircle2, ArrowRight, Lock } from "lucide-react";
-import { cn } from "@/app/components/dossier-components";
+import { cn } from "./dossier-components";
 
 interface Posture {
   id: string;
@@ -44,8 +44,6 @@ export function PostureTerminal() {
   const [isSigned, setIsSigned] = useState(false);
   const [signature, setSignature] = useState("");
 
-  const selectedPosture = postures.find(p => p.id === selectedId);
-
   return (
     <div className="w-full max-w-5xl mx-auto my-24 border-4 border-ink-black bg-white shadow-[20px_20px_0px_var(--ink-black)] overflow-hidden">
       <div className="bg-ink-black text-white p-4 font-mono text-[10px] flex justify-between items-center px-8">
@@ -66,8 +64,10 @@ export function PostureTerminal() {
           <div className="grid gap-6">
             {postures.map((posture) => (
               <motion.button
+                type="button"
                 key={posture.id}
                 onClick={() => !isSigned && setSelectedId(posture.id)}
+                aria-pressed={selectedId === posture.id}
                 className={cn(
                   "w-full text-left p-6 border-2 transition-all relative overflow-hidden group",
                   selectedId === posture.id ? "border-ink-black bg-ink-black/5" : "border-ink-black/10 hover:border-ink-black/30 bg-transparent",
@@ -123,12 +123,14 @@ export function PostureTerminal() {
                 className="space-y-8"
               >
                 <div className="space-y-2">
-                  <label className="font-mono text-[10px] font-black uppercase tracking-widest text-ink-black">Final Confirmation</label>
+                  <label htmlFor="operator-callsign" className="font-mono text-[10px] font-black uppercase tracking-widest text-ink-black">Final Confirmation</label>
                   <p className="text-sm font-serif italic text-gray-600">Enter your operator callsign to commit to this posture. This action cannot be undone.</p>
                 </div>
                 
                 <div className="relative">
                   <input 
+                    id="operator-callsign"
+                    aria-label="Operator callsign"
                     type="text"
                     value={signature}
                     onChange={(e) => setSignature(e.target.value)}
@@ -138,6 +140,7 @@ export function PostureTerminal() {
                 </div>
 
                 <button 
+                  type="button"
                   disabled={!signature.trim()}
                   onClick={() => setIsSigned(true)}
                   className="w-full py-6 bg-stamp-red text-white font-mono font-black text-xs uppercase tracking-[0.4em] shadow-[8px_8px_0px_var(--ink-black)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
@@ -177,7 +180,7 @@ export function PostureTerminal() {
         </div>
         <div className="flex gap-4">
           <span>THREAT_LEVEL: OMEGA</span>
-          <span className="text-stamp-red animate-pulse">● LIVE_FEED_ACTIVE</span>
+          <span className="text-stamp-red motion-safe:animate-pulse">● LIVE_FEED_ACTIVE</span>
         </div>
       </div>
     </div>
