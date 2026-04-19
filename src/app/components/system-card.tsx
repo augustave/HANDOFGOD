@@ -107,7 +107,7 @@ export const SystemCard = ({ activeAct, role, data, reducedMotion = false, sessi
   };
 
   return (
-    <div className="bg-ink-black text-white p-0 shadow-[24px_24px_0px_rgba(0,0,0,0.1)] border-t-4 border-star-gold sticky top-32 h-fit hidden lg:block overflow-hidden min-w-[340px]">
+    <div className="bg-ink-black text-white p-0 shadow-[24px_24px_0px_rgba(0,0,0,0.1)] border-t-4 border-star-gold sticky top-28 hidden lg:block overflow-hidden overflow-y-auto min-w-[340px] max-w-[340px] max-h-[calc(100vh-13rem)] scrollbar-none">
       {/* Header */}
       <div className="relative p-6 pb-4">
         <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">

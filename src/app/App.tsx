@@ -236,7 +236,7 @@ export default function App() {
         </div>
 
         {!isFocusMode && (
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:flex justify-end xl:translate-x-6 2xl:translate-x-10 transition-transform duration-500">
             <SystemCard activeAct={activeAct} role={role} data={SYSTEM_CARD_STATES} reducedMotion={reducedMotion} sessionId={sessionId} />
           </aside>
         )}
