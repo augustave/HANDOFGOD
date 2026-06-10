@@ -34,7 +34,7 @@ export const TwoFrontSimulator = () => {
   }, [techVal, narrativeVal]);
 
   return (
-    <div className="my-16 p-8 md:p-12 bg-white border-2 border-ink-black shadow-[16px_16px_0px_var(--dossier-blue)] relative overflow-hidden">
+    <div className="my-16 p-8 md:p-12 bg-white border-2 border-ink-black shadow-[16px_16px_0px_rgba(0,0,0,0.04)] relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.04] pointer-events-none graph-overlay" />
       <div className="flex justify-between items-center mb-10 border-b-2 border-ink-black/10 pb-6 relative z-10">
         <h3 className="font-mono font-black flex items-center gap-3 text-sm uppercase tracking-[0.3em]">

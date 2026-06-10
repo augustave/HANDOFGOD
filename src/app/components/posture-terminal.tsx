@@ -45,7 +45,7 @@ export function PostureTerminal() {
   const [signature, setSignature] = useState("");
 
   return (
-    <div className="w-full max-w-5xl mx-auto my-24 border-4 border-ink-black bg-white shadow-[20px_20px_0px_var(--ink-black)] overflow-hidden">
+    <div className="w-full max-w-5xl mx-auto my-24 border-4 border-ink-black bg-white shadow-[20px_20px_0px_rgba(0,0,0,0.04)] overflow-hidden">
       <div className="bg-ink-black text-white p-4 font-mono text-[10px] flex justify-between items-center px-8">
         <div className="flex items-center gap-3">
           <Terminal className="w-4 h-4 text-star-gold" />
@@ -143,7 +143,7 @@ export function PostureTerminal() {
                   type="button"
                   disabled={!signature.trim()}
                   onClick={() => setIsSigned(true)}
-                  className="w-full py-6 bg-stamp-red text-white font-mono font-black text-xs uppercase tracking-[0.4em] shadow-[8px_8px_0px_var(--ink-black)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
+                  className="w-full py-6 bg-stamp-red text-white font-mono font-black text-xs uppercase tracking-[0.4em] shadow-[8px_8px_0px_rgba(0,0,0,0.04)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                 >
                   COMMIT_TO_POSTURE
                 </button>

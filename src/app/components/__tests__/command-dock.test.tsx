@@ -12,6 +12,8 @@ const defaultProps = {
   setIsWoke: vi.fn(),
   isFocusMode: false,
   setIsFocusMode: vi.fn(),
+  isFullRead: false,
+  setIsFullRead: vi.fn(),
   mode: "READ" as const,
   setMode: vi.fn(),
   role: "ANALYST" as const,
@@ -42,6 +44,9 @@ describe("CommandDock", () => {
 
     await user.click(screen.getByLabelText("Toggle plain text mode"));
     expect(defaultProps.setPlainTextMode).toHaveBeenCalledWith(true);
+
+    await user.click(screen.getByLabelText("Toggle read-all mode"));
+    expect(defaultProps.setIsFullRead).toHaveBeenCalledWith(true);
   });
 
   it("opens share composer callback from the desktop action", async () => {

@@ -28,7 +28,7 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
         <div className={proseClass}>
           {role === "COMMANDER" && (
             <div className="bg-stamp-red/5 border-l-4 border-stamp-red p-6 font-mono text-[10px] uppercase tracking-widest text-stamp-red font-black">
-              COMMANDER_EYES_ONLY: Morality is a containment protocol. Break it only when structural integrity is at 0%.
+              COMMANDER_EYES_ONLY: The late Pope Francis — a die-hard San Lorenzo fan — would have been hard-pressed to call it a foul. The only lie a Pope could tell as God's representative on earth.
             </div>
           )}
           {mode === "BRIEF" ? (
@@ -36,16 +36,24 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
           ) : (
             <>
               <p>
-                The first rule of the new world is this:{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>Legibility is a weapon</RedactionInline>.
-                If a system is designed to be invisible, it is designed to be unaccountable. We were told that the internet would
-                democratize information, but it instead industrialized capture.
+                In 1986, Diego Maradona scored the most infamous goal in football history. Argentina vs. England, World Cup
+                quarterfinal. The ball dropped into the box, Maradona rose, and it went in—off a hand the referee didn't see.
+                Later he called it <em>La Mano de Dios</em>: the Hand of God. People still argue about that moment like it's
+                theology. But the interesting question isn't the morality. It's{" "}
+                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>why it became a national myth</RedactionInline>.
+              </p>
+              <p>
+                I learned that the hard way. First day of school in Buenos Aires, where my father had just been posted as a
+                diplomat. I had maybe two sentences of Spanish, and recess was a wall of noise I couldn't parse. A kid walked up
+                and asked—in words I could barely decode but whose meaning was unmistakable—whether Maradona's goal was valid.
+                Was I pro-English, or else? It wasn't a debate about rules. It was{" "}
+                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>a belonging test</RedactionInline>.
               </p>
               <EvidenceWall />
               <p>
-                What we call "morality" in the digital sphere is often just a set of{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>unilateral constraints</RedactionInline>{" "}
-                that only the honest follow. This creates a massive, unmonitored surface area for bad actors to exploit.
+                The uncomfortable insight isn't "cheating is good." It's that people unify around capability and will—especially
+                when official channels feel rigged against them. A shared myth can work like a cultural immune response: it
+                compresses complexity into a story that restores agency.
               </p>
               <ExhibitCard {...EXHIBITS.myth_of_morality} />
             </>
@@ -58,7 +66,7 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
         <div className={proseClass}>
           {role !== "ANALYST" && (
             <div className="bg-dossier-blue/5 border-l-4 border-dossier-blue p-6 font-mono text-[10px] uppercase tracking-widest text-dossier-blue font-black">
-              FIELD_NOTE: Attention loops are most vulnerable during low-latency synchronization events.
+              FIELD_NOTE: A good man is a very dangerous man who has that under voluntary control. The sector inverted it.
             </div>
           )}
           {mode === "BRIEF" ? (
@@ -66,16 +74,16 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
           ) : (
             <>
               <p>
-                In a world of infinite data,{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>Attention is the only finite resource</RedactionInline>.
-                Narrative is the API we use to access it. If you do not control the narrative layer of your stack, you are effectively
-                running code you haven't audited.
+                There's a peculiar reflex in American tech: the faster someone builds something powerful, the more urgently they
+                perform uncertainty about whether it should exist at all. Caution is wisdom.{" "}
+                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>Performative caution is something else</RedactionInline>
+                —narrating your own self-handicapping as morality, treating defenselessness as virtue and calling it "principle."
               </p>
               <p>
-                Authenticity cannot be faked, but it can be{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>harvested</RedactionInline>.
-                The modern attention economy is a giant combine harvester, stripping the meaning from genuine human connection and
-                turning it into engagement metrics.
+                We built extraordinary power, then refused to acknowledge it, secure it, or wield it. That's not virtue. That's{" "}
+                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>leaving loaded weapons in unlocked rooms</RedactionInline>{" "}
+                and calling it peace. In the Prisoner's Dilemma, the worst outcome isn't mutual conflict—it's the Sucker's Payoff:
+                you cooperate while the other side defects. It feels virtuous from the inside. Strategically, it's a donation.
               </p>
               <CaptureSimulator />
               <ExhibitCard {...EXHIBITS.authentic_narrative} />
@@ -92,12 +100,14 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
           ) : (
             <>
               <p>
-                We are fighting a war on two fronts: the technical and the psychological. One is about bits and bytes; the other is
-                about hearts and minds. You cannot win one without the other.
+                A serious intelligence operation has at least two components: Tech, and PSYOP. We can field the best cyberwarfare
+                units in the world and run the most advanced AI labs—win the technology side completely—and still lose, because
+                the second front targets something no firewall covers: a society's willingness to defend its own advantage.
               </p>
               <TwoFrontSimulator />
+              <ExhibitCard {...EXHIBITS.two_front} />
               <p className="text-xl opacity-70 border-l-4 border-stamp-red pl-8 italic font-black leading-tight uppercase tracking-normal py-4 bg-stamp-red/5 text-ink-black">
-                "The most secure server in the world is useless if the operator is under a trance."
+                "The simplest way to beat a strong country is to convince it to sabotage itself."
               </p>
             </>
           )}
@@ -111,14 +121,18 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
           ) : (
             <>
               <p>
-                Technology is not a tool; it is a weapon. Every piece of code is a dual-use asset. To build is to create power, and
-                power is never neutral. We must accept the sword to wield the shield.
+                If you're designing communication infrastructure, cloud platforms, AI systems, social networks, supply chain
+                software—anything that shapes coordination at scale—you are not "just" building a product. You're building{" "}
+                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>dual-use infrastructure</RedactionInline>.
+                The boundary between "civilian tech" and "national security" didn't dissolve because anyone signed a treaty. It
+                dissolved because software became the terrain.
               </p>
               <ExhibitCard {...EXHIBITS.sovereign} />
               <p>
-                Sovereignty is the ability to say "No" to the network. It is the capacity to operate{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>out of band</RedactionInline>{" "}
-                when the primary channels are compromised.
+                The question isn't whether product designers are part of the national security architecture. We already are. The
+                question is whether we understand the threat models of what we're building. Ethics require{" "}
+                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>recognizing intent</RedactionInline>.
+                Treating hostile and friendly actors as morally equivalent isn't sophistication. It's negligence dressed as purity.
               </p>
               <SovereignKeyGenerator />
             </>
@@ -134,8 +148,15 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
           ) : (
             <>
               <p>
-                The interface is the point of contact between the system and the human. It is where power is mediated. If the interface
-                is opaque, the user is a subject. If it is transparent, the user is an operator.
+                My father worked Protocol in the Foreign Service. Seating charts were his chess. Positions at an inauguration
+                aren't made off-the-cuff; they're composed—for foreign governments—the way a sentence is composed. Putting that
+                stack of tech CEOs in the frame was a message: AI is a state priority now. It was the equivalent of{" "}
+                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>parading a new tank through Red Square</RedactionInline>.
+              </p>
+              <p>
+                Look past the user interface of politics to the code underneath. The UI was wealth standing too close to power.
+                The code was capacity. If your culture treats its strongest capabilities as moral stains by default, you don't
+                need foreign enemies—you've already done their work. Unity in 2026 isn't chants. It's interfaces.
               </p>
               <InterfaceChecklist />
             </>
@@ -166,8 +187,10 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 ))}
               </div>
               <p>
-                We are raising a generation of consumers, not operators. Literacy is the first line of defense. Without it, the most
-                secure infrastructure will eventually be handed over to the adversary.
+                Product designers need national security literacy because we are already assets in a national security
+                architecture. Not "should be." Already are. And this is the skill we already have, pointed at a domain we've been
+                avoiding: sitting with messy, adversarial, ambiguous systems without flinching—and shipping anyway. Discomfort?
+                Good. Ambiguity? Good. Pressure? Good. The gap isn't aptitude. It's literacy. Comfort is not a strategy.
               </p>
             </>
           )}
@@ -176,9 +199,16 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
     case 7:
       return (
         <div className="space-y-16">
+          {role === "COMMANDER" && (
+            <div className="bg-stamp-red/5 border-l-4 border-stamp-red p-6 font-mono text-[10px] uppercase tracking-widest text-stamp-red font-black">
+              COMMANDER_EYES_ONLY: Jacobsen asked Waugh and Prado who would win if they had to kill each other. Each said "me."
+              Then Waugh came back: "Let me tell you how I would win. I'd cheat. I'd show up before the duel and I'd kill him."
+            </div>
+          )}
           <div className="prose prose-2xl max-w-none opacity-95 leading-relaxed font-serif text-ink-black/90 text-center">
             <p className="text-2xl font-medium max-w-2xl mx-auto italic opacity-80 text-ink-black">
-              The trance is a choice. The wake is a responsibility. Choose your posture.
+              Restraint only means something if you're capable of doing otherwise. The myth can spark; it can't steer. The trance
+              ends when we accept the sword in our hands.
             </p>
           </div>
           <PostureTerminal />
@@ -197,33 +227,33 @@ export function ActBriefing({ idx }: { idx: number }) {
 
 const EXHIBIT_BRIEFING_STATES: Record<number, string[]> = {
   1: [
-    "Identify the primary Moral Authority vulnerability.",
-    "Deploy Structural Integrity to mitigate Ideological Capture.",
-    "Audit the system via the Resilience benchmark.",
+    "Identify the Outsider Test vulnerability in the belonging protocol.",
+    "Deploy the Cultural Immune Response to mitigate Subversion Fever.",
+    "Audit the system via the Unity Under Pressure benchmark.",
   ],
   2: [
-    "Identify the primary Dopaminergic Loops vulnerability.",
-    "Deploy Friction Injection to mitigate Algorithmic Capture.",
-    "Audit the system via the Agency Score benchmark.",
+    "Identify the Performative Caution vulnerability in builder confidence.",
+    "Deploy Capability Without Apology to avoid the Sucker's Payoff.",
+    "Audit the system via the Strategic Maturity benchmark.",
   ],
   3: [
-    "Identify the primary Parallel Attack vulnerability.",
-    "Deploy Sovereign Stack to mitigate Dual-Use Leakage.",
-    "Audit the system via the Strategic Depth benchmark.",
+    "Identify the second front: PSYOP targeting the will to defend advantage.",
+    "Deploy Counter-Narrative Literacy to mitigate Self-Sabotage.",
+    "Audit the system via the Willingness to Defend Advantage benchmark.",
   ],
   4: [
-    "Identify the primary Willful Command vulnerability.",
-    "Deploy Accepting the Sword to mitigate Strategic Paralysis.",
-    "Audit the system via the Decisiveness benchmark.",
+    "Identify open-research defaults and supply chain opacity as attack surface.",
+    "Deploy OpSec, Selective Openness, and Valley↔DC interfaces.",
+    "Audit via Innovation Lead Without Legitimacy Collapse.",
   ],
   5: [
-    "Identify the primary Cognitive Load vulnerability.",
-    "Deploy Legibility Frameworks to mitigate Interface Opacity.",
-    "Audit the system via the Literacy benchmark.",
+    "Identify the Cynicism Reflex: reading national capacity as shame.",
+    "Deploy Protocols, Not Vibes — shared threat models, export controls, supply-chain security.",
+    "Audit the system via the Interface Coverage benchmark.",
   ],
   6: [
-    "Identify the primary Mental Models vulnerability.",
-    "Deploy Literacy Nodes to mitigate Capability Gap.",
-    "Audit the system via the Outcome benchmark.",
+    "Identify Comfort as the vulnerability in designer temperament.",
+    "Deploy literacy nodes: intel, info ops, supply chain, strategy.",
+    "Audit the system via the Adult Realism benchmark.",
   ],
 };

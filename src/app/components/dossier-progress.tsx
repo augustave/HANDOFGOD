@@ -17,7 +17,7 @@ export function DossierProgress({ acts, completedActs, activeAct, mode, role }: 
 
   return (
     <div className="w-full max-w-5xl mx-auto my-24">
-      <div className="border-4 border-ink-black bg-white shadow-[16px_16px_0px_rgba(0,0,0,0.08)] overflow-hidden">
+      <div className="border-4 border-ink-black bg-white shadow-[16px_16px_0px_rgba(0,0,0,0.04)] overflow-hidden">
         {/* Header */}
         <div className="bg-ink-black text-white p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">

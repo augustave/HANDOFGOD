@@ -47,7 +47,7 @@ export const CaptureSimulator = () => {
   };
 
   return (
-    <div className="my-16 bg-white border-4 border-ink-black p-8 shadow-[16px_16px_0px_var(--dossier-blue)] relative overflow-hidden">
+    <div className="my-16 bg-white border-4 border-ink-black p-8 shadow-[16px_16px_0px_rgba(0,0,0,0.04)] relative overflow-hidden">
       <div className="absolute top-0 right-0 w-24 h-24 bg-dossier-blue/5 -rotate-12 translate-x-12 -translate-y-12" />
       
       <div className="flex justify-between items-center mb-8 border-b-2 border-ink-black/10 pb-4">

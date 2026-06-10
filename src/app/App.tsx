@@ -11,6 +11,7 @@ import { ActBriefing, ActRenderer } from "./components/act-renderer";
 import { cn, SecureLine, TornEdge } from "./components/dossier-components";
 import { CommandDock } from "./components/command-dock";
 import { DossierProgress } from "./components/dossier-progress";
+import { FullArticle } from "./components/full-article";
 import { HeroSection } from "./components/hero-section";
 import { SelectionTooltip } from "./components/selection-tooltip";
 import { StarRailNav } from "./components/star-rail-nav";
@@ -26,6 +27,7 @@ export default function App() {
   const [isWoke, setIsWoke] = useState(false);
   const [isAudioMode, setIsAudioMode] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const [isFullRead, setIsFullRead] = useState(false);
   const [mode, setMode] = useState<ExperienceMode>("READ");
   const [role, setRole] = useState<SecurityRole>("ANALYST");
   const [shareText, setShareText] = useState("");
@@ -123,9 +125,9 @@ export default function App() {
         </div>
       )}
 
-      {!isFocusMode && <StarRailNav acts={ACTS} activeAct={activeAct} scrollPerc={scrollPerc} reducedMotion={reducedMotion} />}
+      {!isFocusMode && !isFullRead && <StarRailNav acts={ACTS} activeAct={activeAct} scrollPerc={scrollPerc} reducedMotion={reducedMotion} />}
 
-      {!isFocusMode && (
+      {!isFocusMode && !isFullRead && (
         <div className="fixed right-0 top-1/2 -translate-y-1/2 z-[90] hidden xl:flex flex-col gap-px" aria-label="Dossier act tabs">
           {ACTS.map((act, i) => (
             <button
@@ -134,7 +136,7 @@ export default function App() {
               aria-label={`Navigate to ${act.code}: ${act.title}`}
               onClick={() => document.getElementById(`act-${act.id}`)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" })}
               className={cn(
-                "w-12 h-24 bg-tape-beige/80 hover:bg-tape-beige hover:w-16 transition-all border-y border-ink-black/5 flex items-center justify-center cursor-pointer overflow-hidden group shadow-[-4px_0px_10px_rgba(0,0,0,0.05)]",
+                "w-12 h-24 bg-tape-beige/80 hover:bg-tape-beige hover:w-16 transition-all border-y border-ink-black/5 flex items-center justify-center cursor-pointer overflow-hidden group shadow-[-4px_0px_10px_rgba(0,0,0,0.04)]",
                 activeAct === i && "bg-star-gold/60 w-16 -translate-x-1",
               )}
             >
@@ -192,10 +194,14 @@ export default function App() {
       <main
         className={cn(
           "max-w-7xl mx-auto px-5 md:px-24 pt-40 md:pt-48 pb-64 grid lg:grid-cols-[1fr_340px] gap-20 transition-all duration-1000",
-          isFocusMode && "lg:grid-cols-1 max-w-4xl",
+          (isFocusMode || isFullRead) && "lg:grid-cols-1 max-w-4xl",
         )}
       >
         <div className="space-y-40 md:space-y-48">
+          {isFullRead ? (
+            <FullArticle />
+          ) : (
+            <>
           <HeroSection />
 
           {ACTS.slice(1).map((act, idx) => {
@@ -225,6 +231,8 @@ export default function App() {
               </section>
             );
           })}
+            </>
+          )}
 
           <footer className="pt-32 pb-64 text-center space-y-8">
             <DossierProgress acts={ACTS} completedActs={completedActs} activeAct={activeAct} mode={mode} role={role} />
@@ -235,7 +243,7 @@ export default function App() {
           </footer>
         </div>
 
-        {!isFocusMode && (
+        {!isFocusMode && !isFullRead && (
           <aside className="hidden lg:flex justify-end xl:translate-x-6 2xl:translate-x-10 transition-transform duration-500">
             <SystemCard activeAct={activeAct} role={role} data={SYSTEM_CARD_STATES} reducedMotion={reducedMotion} sessionId={sessionId} />
           </aside>
@@ -251,6 +259,8 @@ export default function App() {
         setIsWoke={setIsWoke}
         isFocusMode={isFocusMode}
         setIsFocusMode={setIsFocusMode}
+        isFullRead={isFullRead}
+        setIsFullRead={setIsFullRead}
         mode={mode}
         setMode={setMode}
         role={role}
@@ -306,11 +316,13 @@ export default function App() {
           onToggleWake={() => setIsWoke((prev) => !prev)}
           onToggleAudio={() => setIsAudioMode((prev) => !prev)}
           onToggleFocus={() => setIsFocusMode((prev) => !prev)}
+          onToggleFullRead={() => setIsFullRead((prev) => !prev)}
           onTogglePlainText={() => setPlainTextMode((prev) => !prev)}
           currentMode={mode}
           isWoke={isWoke}
           isAudioMode={isAudioMode}
           isFocusMode={isFocusMode}
+          isFullRead={isFullRead}
         />
       </Suspense>
     </div>

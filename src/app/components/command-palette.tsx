@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, Command, ArrowRight, Zap, Volume2, Shield, FileText, Monitor, Focus, Unlock, Lock, Crosshair, BookOpen, TerminalIcon } from "lucide-react";
+import { Search, Command, ArrowRight, Zap, Volume2, Shield, FileText, Monitor, Focus, Unlock, Lock, Crosshair, BookOpen, ScrollText, TerminalIcon } from "lucide-react";
 import { cn } from "./dossier-components";
 import type { DossierAct, ExperienceMode } from "../types";
 
@@ -18,6 +18,8 @@ interface CommandPaletteProps {
   isWoke?: boolean;
   isAudioMode?: boolean;
   isFocusMode?: boolean;
+  onToggleFullRead?: () => void;
+  isFullRead?: boolean;
 }
 
 type PaletteActItem = DossierAct & { type: "act" };
@@ -48,6 +50,8 @@ export function CommandPalette({
   isWoke = false,
   isAudioMode = false,
   isFocusMode = false,
+  onToggleFullRead,
+  isFullRead = false,
 }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -115,6 +119,15 @@ export function CommandPalette({
       shortcut: "F",
       active: isFocusMode,
       action: () => onToggleFocus?.(),
+    },
+    {
+      id: "toggle-fullread",
+      label: isFullRead ? "Exit Read-All Mode" : "Read Full Article",
+      desc: isFullRead ? "Restore the interactive acts" : "Show the whole article in one continuous column",
+      icon: <ScrollText className="w-4 h-4" />,
+      shortcut: "L",
+      active: isFullRead,
+      action: () => onToggleFullRead?.(),
     },
     {
       id: "toggle-plaintext",
@@ -239,7 +252,7 @@ export function CommandPalette({
           initial={{ opacity: 0, scale: 0.95, y: -20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -20 }}
-          className="w-full max-w-2xl bg-substrate-paper border-4 border-ink-black shadow-[24px_24px_0px_rgba(0,0,0,0.5)] overflow-hidden relative z-10"
+          className="w-full max-w-2xl bg-substrate-paper border-4 border-ink-black shadow-[24px_24px_0px_rgba(0,0,0,0.04)] overflow-hidden relative z-10"
         >
           {/* Search input */}
           <div className="p-6 border-b-4 border-ink-black flex items-center gap-4 bg-white">

@@ -82,7 +82,7 @@ export const ShareCardComposer = ({ text, isOpen, onClose }: ShareCardProps) => 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-substrate-paper max-w-2xl w-full border-2 border-ink-black shadow-[24px_24px_0px_var(--stamp-red)] relative"
+            className="bg-substrate-paper max-w-2xl w-full border-2 border-ink-black shadow-[24px_24px_0px_rgba(0,0,0,0.04)] relative"
           >
             <div className="bg-ink-black p-4 flex justify-between items-center">
               <span className="font-mono text-[10px] text-white font-black tracking-widest uppercase">FRAGMENT_EXPORT_V1.0</span>

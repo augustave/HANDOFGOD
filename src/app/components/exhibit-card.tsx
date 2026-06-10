@@ -23,7 +23,7 @@ export const ExhibitCard = ({ id, title, source, threat, implication, metadata }
   ] as const;
 
   return (
-    <div className="my-12 border-2 border-ink-black/20 bg-white shadow-[8px_8px_0px_rgba(0,0,0,0.05)] overflow-hidden">
+    <div className="my-12 border-2 border-ink-black/20 bg-white shadow-[8px_8px_0px_rgba(0,0,0,0.04)] overflow-hidden">
       <button
         type="button"
         className="flex items-center justify-between px-6 py-4 bg-ink-black text-white cursor-pointer group"

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Eye, EyeOff, Volume2, VolumeX, Lock, Unlock, FileText, Share2, Download, X, Menu } from "lucide-react";
+import { Eye, EyeOff, Volume2, VolumeX, Lock, Unlock, FileText, ScrollText, Share2, Download, X, Menu } from "lucide-react";
 import { cn } from "./dossier-components";
 import type { ExperienceMode, SecurityRole } from "../types";
 
@@ -14,6 +14,8 @@ interface CommandDockProps {
   setIsWoke: (v: boolean) => void;
   isFocusMode: boolean;
   setIsFocusMode: (v: boolean) => void;
+  isFullRead: boolean;
+  setIsFullRead: (v: boolean) => void;
   mode: ExperienceMode;
   setMode: (m: ExperienceMode) => void;
   role: SecurityRole;
@@ -37,6 +39,8 @@ export const CommandDock = ({
   setIsWoke,
   isFocusMode,
   setIsFocusMode,
+  isFullRead,
+  setIsFullRead,
   mode,
   setMode,
   role,
@@ -115,6 +119,16 @@ export const CommandDock = ({
             aria-pressed={isFocusMode}
           >
             <FileText className={cn("w-4 h-4", isFocusMode && "text-star-gold")} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsFullRead(!isFullRead)}
+            className="p-2 text-gray-500 hover:text-white transition-colors cursor-pointer"
+            title="Read Full Article"
+            aria-label="Toggle read-all mode"
+            aria-pressed={isFullRead}
+          >
+            <ScrollText className={cn("w-4 h-4", isFullRead && "text-star-gold")} />
           </button>
           <button
             type="button"
@@ -242,6 +256,18 @@ export const CommandDock = ({
                   >
                     <FileText className="w-3.5 h-3.5" />
                     FOCUS
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsFullRead(!isFullRead)}
+                    aria-pressed={isFullRead}
+                    className={cn(
+                      "flex items-center gap-2 p-3 font-mono text-[9px] font-black uppercase tracking-widest transition-colors cursor-pointer border",
+                      isFullRead ? "bg-star-gold/20 text-star-gold border-star-gold/30" : "text-gray-500 border-white/10"
+                    )}
+                  >
+                    <ScrollText className="w-3.5 h-3.5" />
+                    READ ALL
                   </button>
                   <button
                     type="button"

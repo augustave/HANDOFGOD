@@ -28,7 +28,7 @@ export const InterfaceChecklist = () => {
   };
 
   return (
-    <div className="my-16 p-12 bg-ink-black text-white space-y-10 shadow-[24px_24px_60px_rgba(0,0,0,0.4)] border-t border-white/10 relative overflow-hidden">
+    <div className="my-16 p-12 bg-ink-black text-white space-y-10 shadow-[24px_24px_60px_rgba(0,0,0,0.04)] border-t border-white/10 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-1 h-full bg-star-gold" />
       <div className="absolute bottom-0 right-0 p-8 opacity-[0.03]"><CheckCircle2 className="w-48 h-48" /></div>
       
