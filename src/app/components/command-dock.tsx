@@ -3,23 +3,12 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff, Volume2, VolumeX, Lock, Unlock, FileText, ScrollText, Share2, Download, X, Menu } from "lucide-react";
 import { cn } from "./dossier-components";
+import { useDossierStore } from "../store";
 import type { ExperienceMode, SecurityRole } from "../types";
 
 interface CommandDockProps {
-  plainTextMode: boolean;
-  setPlainTextMode: (v: boolean) => void;
-  isAudioMode: boolean;
-  setIsAudioMode: (v: boolean) => void;
-  isWoke: boolean;
-  setIsWoke: (v: boolean) => void;
-  isFocusMode: boolean;
-  setIsFocusMode: (v: boolean) => void;
-  isFullRead: boolean;
-  setIsFullRead: (v: boolean) => void;
   mode: ExperienceMode;
   setMode: (m: ExperienceMode) => void;
-  role: SecurityRole;
-  setRole: (r: SecurityRole) => void;
   onShare?: () => void;
 }
 
@@ -30,23 +19,19 @@ function isSecurityRole(value: string): value is SecurityRole {
   return roles.includes(value as SecurityRole);
 }
 
-export const CommandDock = ({
-  plainTextMode,
-  setPlainTextMode,
-  isAudioMode,
-  setIsAudioMode,
-  isWoke,
-  setIsWoke,
-  isFocusMode,
-  setIsFocusMode,
-  isFullRead,
-  setIsFullRead,
-  mode,
-  setMode,
-  role,
-  setRole,
-  onShare
-}: CommandDockProps) => {
+export const CommandDock = ({ mode, setMode, onShare }: CommandDockProps) => {
+  const plainTextMode = useDossierStore((s) => s.plainTextMode);
+  const setPlainTextMode = useDossierStore((s) => s.setPlainTextMode);
+  const isAudioMode = useDossierStore((s) => s.isAudioMode);
+  const setIsAudioMode = useDossierStore((s) => s.setIsAudioMode);
+  const isWoke = useDossierStore((s) => s.isWoke);
+  const setIsWoke = useDossierStore((s) => s.setIsWoke);
+  const isFocusMode = useDossierStore((s) => s.isFocusMode);
+  const setIsFocusMode = useDossierStore((s) => s.setIsFocusMode);
+  const isFullRead = useDossierStore((s) => s.isFullRead);
+  const setIsFullRead = useDossierStore((s) => s.setIsFullRead);
+  const role = useDossierStore((s) => s.role);
+  const setRole = useDossierStore((s) => s.setRole);
   const [mobileExpanded, setMobileExpanded] = useState(false);
 
   return createPortal(

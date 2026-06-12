@@ -2,7 +2,8 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Lock, Search } from "lucide-react";
 import { ACTS, SYSTEM_CARD_STATES } from "./data/dossier";
-import type { ExperienceMode, SecurityRole } from "./types";
+import { useDossierStore } from "./store";
+import type { ExperienceMode } from "./types";
 import { useAudioBriefing } from "./hooks/use-audio-briefing";
 import { useDossierProgress } from "./hooks/use-dossier-progress";
 import { useReducedMotion } from "./hooks/use-reduced-motion";
@@ -13,6 +14,7 @@ import { CommandDock } from "./components/command-dock";
 import { DossierProgress } from "./components/dossier-progress";
 import { FullArticle } from "./components/full-article";
 import { HeroSection } from "./components/hero-section";
+import { isProfileDebugEnabled, ProfileDebug } from "./components/profile-debug";
 import { SelectionTooltip } from "./components/selection-tooltip";
 import { StarRailNav } from "./components/star-rail-nav";
 import { SubliminalFeed } from "./components/subliminal-feed";
@@ -23,13 +25,18 @@ const CommandPalette = lazy(() => import("./components/command-palette").then((m
 const ShareCardComposer = lazy(() => import("./components/share-card-composer").then((mod) => ({ default: mod.ShareCardComposer })));
 
 export default function App() {
-  const [plainTextMode, setPlainTextMode] = useState(false);
-  const [isWoke, setIsWoke] = useState(false);
-  const [isAudioMode, setIsAudioMode] = useState(false);
-  const [isFocusMode, setIsFocusMode] = useState(false);
-  const [isFullRead, setIsFullRead] = useState(false);
+  const plainTextMode = useDossierStore((s) => s.plainTextMode);
+  const setPlainTextMode = useDossierStore((s) => s.setPlainTextMode);
+  const isWoke = useDossierStore((s) => s.isWoke);
+  const setIsWoke = useDossierStore((s) => s.setIsWoke);
+  const isAudioMode = useDossierStore((s) => s.isAudioMode);
+  const setIsAudioMode = useDossierStore((s) => s.setIsAudioMode);
+  const isFocusMode = useDossierStore((s) => s.isFocusMode);
+  const setIsFocusMode = useDossierStore((s) => s.setIsFocusMode);
+  const isFullRead = useDossierStore((s) => s.isFullRead);
+  const setIsFullRead = useDossierStore((s) => s.setIsFullRead);
+  const role = useDossierStore((s) => s.role);
   const [mode, setMode] = useState<ExperienceMode>("READ");
-  const [role, setRole] = useState<SecurityRole>("ANALYST");
   const [shareText, setShareText] = useState("");
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [showBoot, setShowBoot] = useState(true);
@@ -77,6 +84,8 @@ export default function App() {
       <Suspense fallback={null}>
         <AnimatePresence>{showBoot && <BootSequence onComplete={() => setShowBoot(false)} />}</AnimatePresence>
       </Suspense>
+
+      {isProfileDebugEnabled() && <ProfileDebug />}
 
       <AnimatePresence>
         {wakeFlash && !showBoot && (
@@ -251,20 +260,8 @@ export default function App() {
       </main>
 
       <CommandDock
-        plainTextMode={plainTextMode}
-        setPlainTextMode={setPlainTextMode}
-        isAudioMode={isAudioMode}
-        setIsAudioMode={setIsAudioMode}
-        isWoke={isWoke}
-        setIsWoke={setIsWoke}
-        isFocusMode={isFocusMode}
-        setIsFocusMode={setIsFocusMode}
-        isFullRead={isFullRead}
-        setIsFullRead={setIsFullRead}
         mode={mode}
         setMode={setMode}
-        role={role}
-        setRole={setRole}
         onShare={() => {
           setShareText(`[DOSSIER_SUMMARY] Active Act: AX-0${activeAct} // Mode: ${mode} // Role: ${role}. Posture: SOVEREIGN.`);
           setIsShareOpen(true);
@@ -313,11 +310,11 @@ export default function App() {
           acts={ACTS}
           onNavigate={(id) => document.getElementById(`act-${id}`)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" })}
           onToggleMode={(m) => setMode(m)}
-          onToggleWake={() => setIsWoke((prev) => !prev)}
-          onToggleAudio={() => setIsAudioMode((prev) => !prev)}
-          onToggleFocus={() => setIsFocusMode((prev) => !prev)}
-          onToggleFullRead={() => setIsFullRead((prev) => !prev)}
-          onTogglePlainText={() => setPlainTextMode((prev) => !prev)}
+          onToggleWake={() => setIsWoke(!isWoke)}
+          onToggleAudio={() => setIsAudioMode(!isAudioMode)}
+          onToggleFocus={() => setIsFocusMode(!isFocusMode)}
+          onToggleFullRead={() => setIsFullRead(!isFullRead)}
+          onTogglePlainText={() => setPlainTextMode(!plainTextMode)}
           currentMode={mode}
           isWoke={isWoke}
           isAudioMode={isAudioMode}

@@ -2,22 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import { CommandDock } from "../command-dock";
+import { useDossierStore } from "../../store";
 
 const defaultProps = {
-  plainTextMode: false,
-  setPlainTextMode: vi.fn(),
-  isAudioMode: false,
-  setIsAudioMode: vi.fn(),
-  isWoke: false,
-  setIsWoke: vi.fn(),
-  isFocusMode: false,
-  setIsFocusMode: vi.fn(),
-  isFullRead: false,
-  setIsFullRead: vi.fn(),
   mode: "READ" as const,
   setMode: vi.fn(),
-  role: "ANALYST" as const,
-  setRole: vi.fn(),
   onShare: vi.fn(),
 };
 
@@ -34,19 +23,19 @@ describe("CommandDock", () => {
     expect(defaultProps.setMode).toHaveBeenCalledWith("BRIEF");
 
     await user.selectOptions(screen.getByLabelText("Security role"), "COMMANDER");
-    expect(defaultProps.setRole).toHaveBeenCalledWith("COMMANDER");
+    expect(useDossierStore.getState().role).toBe("COMMANDER");
 
     await user.click(screen.getByLabelText("Toggle audio narration"));
-    expect(defaultProps.setIsAudioMode).toHaveBeenCalledWith(true);
+    expect(useDossierStore.getState().isAudioMode).toBe(true);
 
     await user.click(screen.getByLabelText("Toggle focus mode"));
-    expect(defaultProps.setIsFocusMode).toHaveBeenCalledWith(true);
+    expect(useDossierStore.getState().isFocusMode).toBe(true);
 
     await user.click(screen.getByLabelText("Toggle plain text mode"));
-    expect(defaultProps.setPlainTextMode).toHaveBeenCalledWith(true);
+    expect(useDossierStore.getState().plainTextMode).toBe(true);
 
     await user.click(screen.getByLabelText("Toggle read-all mode"));
-    expect(defaultProps.setIsFullRead).toHaveBeenCalledWith(true);
+    expect(useDossierStore.getState().isFullRead).toBe(true);
   });
 
   it("opens share composer callback from the desktop action", async () => {
