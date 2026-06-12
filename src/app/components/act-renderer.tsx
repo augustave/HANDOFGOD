@@ -1,5 +1,8 @@
+import { useMemo } from "react";
 import { BookOpen } from "lucide-react";
-import { EDUCATION_NODES, EXHIBITS } from "../data/dossier";
+import { ACTS, EDUCATION_NODES, EXHIBITS } from "../data/dossier";
+import { useDossierStore } from "../store";
+import { assessedActIds } from "../store/derive";
 import type { ExperienceMode, SecurityRole } from "../types";
 import { BriefingBox, RedactionInline, Stamp } from "./dossier-components";
 import { EvidenceWall } from "./evidence-wall";
@@ -22,6 +25,11 @@ interface ActRendererProps {
 const proseClass = "prose prose-2xl max-w-none space-y-12 opacity-95 leading-relaxed font-serif text-ink-black/90";
 
 export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: ActRendererProps) {
+  const responses = useDossierStore((s) => s.responses);
+  const declassified = useMemo(
+    () => assessedActIds({ responses }).includes(ACTS[idx]?.id ?? ""),
+    [responses, idx],
+  );
   switch (idx) {
     case 1:
       return (
@@ -40,14 +48,14 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 quarterfinal. The ball dropped into the box, Maradona rose, and it went in—off a hand the referee didn't see.
                 Later he called it <em>La Mano de Dios</em>: the Hand of God. People still argue about that moment like it's
                 theology. But the interesting question isn't the morality. It's{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>why it became a national myth</RedactionInline>.
+                <RedactionInline revealed={declassified} plainText={plainTextMode}>why it became a national myth</RedactionInline>.
               </p>
               <p>
                 I learned that the hard way. First day of school in Buenos Aires, where my father had just been posted as a
                 diplomat. I had maybe two sentences of Spanish, and recess was a wall of noise I couldn't parse. A kid walked up
                 and asked—in words I could barely decode but whose meaning was unmistakable—whether Maradona's goal was valid.
                 Was I pro-English, or else? It wasn't a debate about rules. It was{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>a belonging test</RedactionInline>.
+                <RedactionInline revealed={declassified} permanent plainText={plainTextMode}>a belonging test</RedactionInline>.
               </p>
               <EvidenceWall />
               <p>
@@ -76,12 +84,12 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
               <p>
                 There's a peculiar reflex in American tech: the faster someone builds something powerful, the more urgently they
                 perform uncertainty about whether it should exist at all. Caution is wisdom.{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>Performative caution is something else</RedactionInline>
+                <RedactionInline revealed={declassified} plainText={plainTextMode}>Performative caution is something else</RedactionInline>
                 —narrating your own self-handicapping as morality, treating defenselessness as virtue and calling it "principle."
               </p>
               <p>
                 We built extraordinary power, then refused to acknowledge it, secure it, or wield it. That's not virtue. That's{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>leaving loaded weapons in unlocked rooms</RedactionInline>{" "}
+                <RedactionInline revealed={declassified} permanent plainText={plainTextMode}>leaving loaded weapons in unlocked rooms</RedactionInline>{" "}
                 and calling it peace. In the Prisoner's Dilemma, the worst outcome isn't mutual conflict—it's the Sucker's Payoff:
                 you cooperate while the other side defects. It feels virtuous from the inside. Strategically, it's a donation.
               </p>
@@ -123,7 +131,7 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
               <p>
                 If you're designing communication infrastructure, cloud platforms, AI systems, social networks, supply chain
                 software—anything that shapes coordination at scale—you are not "just" building a product. You're building{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>dual-use infrastructure</RedactionInline>.
+                <RedactionInline revealed={declassified} plainText={plainTextMode}>dual-use infrastructure</RedactionInline>.
                 The boundary between "civilian tech" and "national security" didn't dissolve because anyone signed a treaty. It
                 dissolved because software became the terrain.
               </p>
@@ -131,7 +139,7 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
               <p>
                 The question isn't whether product designers are part of the national security architecture. We already are. The
                 question is whether we understand the threat models of what we're building. Ethics require{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} permanent plainText={plainTextMode}>recognizing intent</RedactionInline>.
+                <RedactionInline revealed={declassified} permanent plainText={plainTextMode}>recognizing intent</RedactionInline>.
                 Treating hostile and friendly actors as morally equivalent isn't sophistication. It's negligence dressed as purity.
               </p>
               <SovereignKeyGenerator />
@@ -151,7 +159,7 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 My father worked Protocol in the Foreign Service. Seating charts were his chess. Positions at an inauguration
                 aren't made off-the-cuff; they're composed—for foreign governments—the way a sentence is composed. Putting that
                 stack of tech CEOs in the frame was a message: AI is a state priority now. It was the equivalent of{" "}
-                <RedactionInline isOperate={mode === "OPERATE"} plainText={plainTextMode}>parading a new tank through Red Square</RedactionInline>.
+                <RedactionInline revealed={declassified} plainText={plainTextMode}>parading a new tank through Red Square</RedactionInline>.
               </p>
               <p>
                 Look past the user interface of politics to the code underneath. The UI was wealth standing too close to power.

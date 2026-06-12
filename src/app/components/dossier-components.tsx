@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -10,9 +10,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const RedactionInline = ({ children, permanent = false, plainText = false, isOperate = false }: { children: React.ReactNode; permanent?: boolean; plainText?: boolean; isOperate?: boolean }) => {
-  const [revealed, setRevealed] = useState(false);
-  
+// Inline redaction lifted by knowledge, not mode: `revealed` is driven by the
+// act's declassification state (its field assessment answered).
+export const RedactionInline = ({
+  children,
+  permanent = false,
+  plainText = false,
+  revealed = false,
+}: {
+  children: React.ReactNode;
+  permanent?: boolean;
+  plainText?: boolean;
+  revealed?: boolean;
+}) => {
   if (plainText) return <span className="bg-yellow-200/50 px-0.5 text-black rounded-sm">{children}</span>;
 
   if (permanent) {
@@ -23,29 +33,30 @@ export const RedactionInline = ({ children, permanent = false, plainText = false
     );
   }
 
+  if (revealed) {
+    return (
+      <motion.span
+        initial={{ opacity: 0, filter: "blur(4px)" }}
+        animate={{ opacity: 1, filter: "blur(0px)" }}
+        transition={{ duration: 0.5 }}
+        className="inline px-1 bg-star-gold/15"
+      >
+        {children}
+      </motion.span>
+    );
+  }
+
   return (
-    <motion.span
-      className="relative cursor-help inline px-1 group select-none"
-      onHoverStart={() => isOperate && setRevealed(true)}
-      onHoverEnd={() => isOperate && setRevealed(false)}
-      onClick={() => isOperate && setRevealed(!revealed)}
+    <span
+      className="relative inline px-1 select-none"
+      title="REDACTED // answer this section's field assessment to declassify"
     >
-      <span className={cn(
-        "transition-all duration-500",
-        revealed ? "opacity-100 blur-0 translate-y-0" : "opacity-0 blur-sm translate-y-1"
-      )}>
+      <span className="opacity-0 blur-sm" aria-hidden="true">
         {children}
       </span>
-      {!revealed && (
-        <motion.span 
-          layoutId="redaction-bar"
-          className="absolute inset-0 bg-redaction-black rounded-xs transform transition-all group-hover:scale-y-110 shadow-lg border-y border-white/10"
-          initial={false}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        />
-      )}
-    </motion.span>
+      <span className="absolute inset-0 bg-redaction-black rounded-xs border-y border-white/10" />
+      <span className="sr-only">redacted - answer this section's field assessment to declassify</span>
+    </span>
   );
 };
 

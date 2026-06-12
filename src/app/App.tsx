@@ -8,6 +8,7 @@ import { useAudioBriefing } from "./hooks/use-audio-briefing";
 import { useDossierProgress } from "./hooks/use-dossier-progress";
 import { useReducedMotion } from "./hooks/use-reduced-motion";
 import { ActBriefing, ActRenderer } from "./components/act-renderer";
+import { AssessmentCheckpoint } from "./components/assessment-checkpoint";
 import { cn, SecureLine, TornEdge } from "./components/dossier-components";
 import { CommandDock } from "./components/command-dock";
 import { DossierProgress } from "./components/dossier-progress";
@@ -236,6 +237,7 @@ export default function App() {
                     role={role}
                     plainTextMode={plainTextMode}
                   />
+                  <AssessmentCheckpoint actId={act.id} actCode={act.code} actIndex={actIndex} />
                 </div>
               </section>
             );
