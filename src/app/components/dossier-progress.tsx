@@ -5,7 +5,7 @@ import type { DossierAct, ExperienceMode, SecurityRole } from "../types";
 
 interface DossierProgressProps {
   acts: DossierAct[];
-  completedActs: number[];
+  completedActs: readonly number[];
   activeAct: number;
   mode: ExperienceMode;
   role: SecurityRole;

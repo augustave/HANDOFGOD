@@ -32,6 +32,16 @@ const PERSISTED_KEYS = [
 type PersistedKey = (typeof PERSISTED_KEYS)[number];
 type PersistedState = Pick<StoreState, PersistedKey>;
 
+// Evaluated at module load, BEFORE the store is created — rehydration writes
+// to storage immediately, so a live read can't distinguish first visits.
+const HAD_PERSISTED_SESSION: boolean = (() => {
+  try {
+    return safeLocalStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
+})();
+
 export const useDossierStore = create<StoreState>()(
   persist(
     (set, get, api) => ({
@@ -82,13 +92,9 @@ export const useDossierStore = create<StoreState>()(
   ),
 );
 
-/** True when a previous session exists on disk (used to auto-skip the boot splash). */
+/** True when a previous session existed on disk at load (auto-skips the boot splash). */
 export function hasPersistedSession(): boolean {
-  try {
-    return safeLocalStorage.getItem(STORAGE_KEY) !== null;
-  } catch {
-    return false;
-  }
+  return HAD_PERSISTED_SESSION;
 }
 
 /** Full reset: clears storage and reinitializes state (BURN SESSION). */

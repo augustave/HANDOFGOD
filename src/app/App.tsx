@@ -2,12 +2,11 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Lock, Search } from "lucide-react";
 import { ACTS, SYSTEM_CARD_STATES } from "./data/dossier";
-import { useDossierStore } from "./store";
+import { hasPersistedSession, useDossierStore } from "./store";
 import type { ExperienceMode } from "./types";
 import { useAudioBriefing } from "./hooks/use-audio-briefing";
 import { useDossierProgress } from "./hooks/use-dossier-progress";
 import { useReducedMotion } from "./hooks/use-reduced-motion";
-import { useStableSession } from "./hooks/use-stable-session";
 import { ActBriefing, ActRenderer } from "./components/act-renderer";
 import { cn, SecureLine, TornEdge } from "./components/dossier-components";
 import { CommandDock } from "./components/command-dock";
@@ -39,12 +38,13 @@ export default function App() {
   const [mode, setMode] = useState<ExperienceMode>("READ");
   const [shareText, setShareText] = useState("");
   const [isShareOpen, setIsShareOpen] = useState(false);
-  const [showBoot, setShowBoot] = useState(true);
+  // Boot splash only on first-ever visits; returning sessions skip straight in.
+  const [showBoot, setShowBoot] = useState(() => !hasPersistedSession());
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [wakeFlash, setWakeFlash] = useState(false);
   const reducedMotion = useReducedMotion();
   const { activeAct, completedActs, scrollPerc } = useDossierProgress();
-  const { sessionId, telemetry } = useStableSession();
+  const sessionId = useDossierStore((s) => s.sessionId);
 
   useAudioBriefing(isAudioMode, activeAct, role, ACTS);
 
@@ -289,8 +289,7 @@ export default function App() {
             <div className="absolute inset-0 bg-stamp-red/[0.02] mix-blend-overlay" />
             <div className="absolute top-0 left-0 w-full h-1 bg-stamp-red/20 motion-safe:animate-scanline-fast" />
             <div className="absolute bottom-10 left-10 space-y-2 font-mono text-[8px] font-black uppercase text-stamp-red/40 tracking-[0.2em]">
-              <div>LAT_DATA: {telemetry.lat}</div>
-              <div>LNG_DATA: {telemetry.lng}</div>
+              <div>SESSION: {sessionId}</div>
               <div>BUFFER: SYNCING...</div>
             </div>
             <div className="absolute top-1/2 right-10 -translate-y-1/2 flex flex-col gap-4">

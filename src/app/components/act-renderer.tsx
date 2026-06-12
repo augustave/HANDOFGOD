@@ -13,7 +13,7 @@ import { BriefSummary } from "./brief-summary";
 
 interface ActRendererProps {
   idx: number;
-  completedActs: number[];
+  completedActs: readonly number[];
   mode: ExperienceMode;
   role: SecurityRole;
   plainTextMode: boolean;

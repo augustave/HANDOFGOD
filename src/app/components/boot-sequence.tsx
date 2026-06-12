@@ -3,22 +3,12 @@ import { motion, AnimatePresence } from "motion/react";
 import { Terminal, ChevronRight, Wifi, ShieldCheck, Activity, Fingerprint, Zap } from "lucide-react";
 
 const BOOT_MESSAGES: { text: string; type: "normal" | "success" | "warning" | "glitch"; delay: number }[] = [
-  { text: "Establishing secure link...", type: "normal", delay: 300 },
-  { text: "Connecting to SOVEREIGN_CORE_v3.1", type: "normal", delay: 250 },
+  { text: "Establishing secure link...", type: "normal", delay: 250 },
   { text: ">> TLS 1.3 handshake complete", type: "success", delay: 200 },
-  { text: "Decrypting hand_of_god_v2.6.bin", type: "normal", delay: 400 },
-  { text: "Bypassing cultural firewalls...", type: "warning", delay: 350 },
-  { text: "▓▓▓▓▒▒▒▒░░░░ [FIREWALL_BREACH]", type: "glitch", delay: 150 },
-  { text: ">> Breach successful. Proceeding.", type: "success", delay: 300 },
-  { text: "Injecting sovereignty protocols", type: "normal", delay: 250 },
-  { text: "Loading operator interface layers...", type: "normal", delay: 300 },
-  { text: ">> Layer 1: NARRATIVE_ENGINE ✓", type: "success", delay: 200 },
-  { text: ">> Layer 2: THREAT_RADAR ✓", type: "success", delay: 200 },
-  { text: ">> Layer 3: SYSTEM_CARD ✓", type: "success", delay: 200 },
-  { text: "Authenticating secure core...", type: "normal", delay: 350 },
-  { text: "Waking from trance state...", type: "warning", delay: 400 },
-  { text: ">> CONSCIOUSNESS_PROTOCOL: ENGAGED", type: "success", delay: 300 },
-  { text: "READY. SOVEREIGNTY CONFIRMED.", type: "success", delay: 500 },
+  { text: "Loading operator interface layers...", type: "normal", delay: 250 },
+  { text: ">> NARRATIVE_ENGINE ✓ THREAT_RADAR ✓ SYSTEM_CARD ✓", type: "success", delay: 250 },
+  { text: "Waking from trance state...", type: "warning", delay: 350 },
+  { text: "READY. SOVEREIGNTY CONFIRMED.", type: "success", delay: 400 },
 ];
 
 export function BootSequence({ onComplete }: { onComplete: () => void }) {
@@ -60,7 +50,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
         if (i === BOOT_MESSAGES.length - 1) {
           setStatus("ACTIVE");
           setPhase("ready");
-          timeouts.push(setTimeout(onComplete, 1200));
+          timeouts.push(setTimeout(onComplete, 600));
         }
       }, totalDelay);
       timeouts.push(timeout);
