@@ -104,21 +104,7 @@ export const BriefingBox = ({ items }: { items: string[] }) => (
 export const SecureLine = ({ text, className }: { text: string; className?: string }) => {
   return (
     <div className={cn("relative group overflow-hidden py-1", className)}>
-      <motion.div
-        animate={{
-          x: [-2, 2, -1, 0],
-          opacity: [1, 0.8, 1, 0.9],
-        }}
-        transition={{
-          duration: 0.2,
-          repeat: Infinity,
-          repeatType: "mirror",
-          repeatDelay: (text.length % 5) + 2
-        }}
-        className="relative z-10"
-      >
-        {text}
-      </motion.div>
+      <div className="relative z-10">{text}</div>
       <div className="absolute inset-0 bg-stamp-red/10 -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
     </div>
   );

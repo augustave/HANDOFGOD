@@ -20,6 +20,7 @@ import { selectClearance, selectSignalCount } from "../store/selectors";
 import { isDebriefUnlocked } from "../store/slices/journey-slice";
 import { BriefSummary } from "./brief-summary";
 import { CHECKLIST_ITEMS } from "./interface-checklist";
+import { ThreatRadar } from "./threat-radar";
 import { cn, Stamp } from "./dossier-components";
 
 const POSTURE_BAR_COLORS: Record<(typeof POSTURES)[number], string> = {
@@ -179,23 +180,38 @@ function UnlockedMirror() {
           ))}
         </div>
 
-        {/* Literacy profile */}
-        <div className="space-y-4">
-          <h3 className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-stamp-red">
-            LITERACY_PROFILE
-          </h3>
-          <div className="grid md:grid-cols-2 gap-x-10 gap-y-4">
-            {DIMENSIONS.map((dim) => (
-              <div key={dim} className="space-y-1">
-                <div className="flex justify-between font-mono text-[9px] font-black uppercase tracking-widest">
-                  <span>{DIMENSION_LABELS[dim]}</span>
-                  <span>{profile[dim]}</span>
+        {/* Literacy profile + exposure snapshot */}
+        <div className="grid md:grid-cols-[1fr_280px] gap-10 items-start">
+          <div className="space-y-4">
+            <h3 className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-stamp-red">
+              LITERACY_PROFILE
+            </h3>
+            <div className="space-y-4">
+              {DIMENSIONS.map((dim) => (
+                <div key={dim} className="space-y-1">
+                  <div className="flex justify-between font-mono text-[9px] font-black uppercase tracking-widest">
+                    <span>{DIMENSION_LABELS[dim]}</span>
+                    <span>{profile[dim]}</span>
+                  </div>
+                  <div className="h-2 bg-ink-black/5 border border-ink-black/15">
+                    <div className="h-full bg-ink-black/70" style={{ width: `${profile[dim]}%` }} />
+                  </div>
                 </div>
-                <div className="h-2 bg-ink-black/5 border border-ink-black/15">
-                  <div className="h-full bg-ink-black/70" style={{ width: `${profile[dim]}%` }} />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+          <div className="border-2 border-ink-black/15 p-4 hidden md:block">
+            <ThreatRadar
+              variant="paper"
+              values={[
+                100 - profile.narrativeLiteracy,
+                100 - profile.capabilityOrientation,
+                100 - profile.institutionalTrust,
+                100 - profile.systemAwareness,
+                100 - profile.strategicRealism,
+                100 - profile.operationalThinking,
+              ]}
+            />
           </div>
         </div>
 

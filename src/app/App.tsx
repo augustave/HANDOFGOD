@@ -17,7 +17,6 @@ import { HeroSection } from "./components/hero-section";
 import { isProfileDebugEnabled, ProfileDebug } from "./components/profile-debug";
 import { SelectionTooltip } from "./components/selection-tooltip";
 import { StarRailNav } from "./components/star-rail-nav";
-import { SubliminalFeed } from "./components/subliminal-feed";
 import { SystemCard } from "./components/system-card";
 
 const BootSequence = lazy(() => import("./components/boot-sequence").then((mod) => ({ default: mod.BootSequence })));
@@ -45,7 +44,6 @@ export default function App() {
   const [wakeFlash, setWakeFlash] = useState(false);
   const reducedMotion = useReducedMotion();
   const { activeAct, completedActs, scrollPerc } = useDossierProgress();
-  const sessionId = useDossierStore((s) => s.sessionId);
 
   useAudioBriefing(isAudioMode, activeAct, role, ACTS);
 
@@ -117,15 +115,8 @@ export default function App() {
         <div className="contents" aria-hidden="true">
           <div className="fixed inset-0 pointer-events-none opacity-[0.06] z-50 mix-blend-multiply paper-fiber-overlay" />
           <div className="fixed inset-0 pointer-events-none opacity-[0.02] z-50 dust-overlay" />
-          {!reducedMotion && (
-            <div className="fixed inset-0 pointer-events-none z-[1000] opacity-[0.03] overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-transparent h-1 motion-safe:animate-scanline pointer-events-none" />
-            </div>
-          )}
         </div>
       )}
-
-      {phase === "OPERATE" && <div className="grain-overlay" aria-hidden="true" />}
 
       {!plainTextMode && (
         <div className="fixed left-2 top-0 bottom-0 flex flex-col justify-around py-20 pointer-events-none z-[60] opacity-20" aria-hidden="true">
@@ -256,7 +247,7 @@ export default function App() {
 
         {!isFocusMode && !isFullRead && (
           <aside className="hidden lg:flex justify-end xl:translate-x-6 2xl:translate-x-10 transition-transform duration-500">
-            <SystemCard activeAct={activeAct} role={role} data={SYSTEM_CARD_STATES} reducedMotion={reducedMotion} sessionId={sessionId} />
+            <SystemCard activeAct={activeAct} role={role} data={SYSTEM_CARD_STATES} />
           </aside>
         )}
       </main>
@@ -274,32 +265,6 @@ export default function App() {
           setIsShareOpen(true);
         }}
       />
-
-      <SubliminalFeed isActive={!reducedMotion && (isAudioMode || phase === "OPERATE")} />
-
-      <AnimatePresence>
-        {phase === "OPERATE" && !reducedMotion && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 pointer-events-none z-[150]"
-            aria-hidden="true"
-          >
-            <div className="absolute inset-0 bg-stamp-red/[0.02] mix-blend-overlay" />
-            <div className="absolute top-0 left-0 w-full h-1 bg-stamp-red/20 motion-safe:animate-scanline-fast" />
-            <div className="absolute bottom-10 left-10 space-y-2 font-mono text-[8px] font-black uppercase text-stamp-red/40 tracking-[0.2em]">
-              <div>SESSION: {sessionId}</div>
-              <div>BUFFER: SYNCING...</div>
-            </div>
-            <div className="absolute top-1/2 right-10 -translate-y-1/2 flex flex-col gap-4">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="w-1 h-4 bg-stamp-red/20" />
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <Suspense fallback={null}>
         <ShareCardComposer text={shareText} isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
