@@ -102,6 +102,57 @@ describe("scenario bank", () => {
   });
 });
 
+describe("knowledge layer content", () => {
+  it("terrain has exactly 8 nodes with unique ids and valid edges", async () => {
+    const { TERRAIN_NODES, TERRAIN_EDGES } = await import("../terrain");
+    expect(TERRAIN_NODES.length).toBe(8);
+    const ids = new Set(TERRAIN_NODES.map((n) => n.id));
+    expect(ids.size).toBe(8);
+    for (const edge of TERRAIN_EDGES) {
+      expect(ids.has(edge.from), `edge from ${edge.from}`).toBe(true);
+      expect(ids.has(edge.to), `edge to ${edge.to}`).toBe(true);
+    }
+    for (const node of TERRAIN_NODES) {
+      expect(node.unlockActIndex).toBeGreaterThanOrEqual(1);
+      expect(node.unlockActIndex).toBeLessThanOrEqual(7);
+    }
+  });
+
+  it("adversary briefs cover all 7 essay acts with 3 vectors each", async () => {
+    const { ADVERSARY_BRIEFS } = await import("../adversary");
+    expect(ADVERSARY_BRIEFS.length).toBe(7);
+    for (const brief of ADVERSARY_BRIEFS) {
+      expect(ACT_IDS.has(brief.actId), `unknown act ${brief.actId}`).toBe(true);
+      expect(brief.vectors.length).toBe(3);
+      expect(brief.counter.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("every declassified extra references a real gate and act", async () => {
+    const { DECLASSIFIED_EXTRAS } = await import("../declassified");
+    const gateIds = new Set(GATES.map((g) => g.id));
+    for (const extra of DECLASSIFIED_EXTRAS) {
+      expect(gateIds.has(extra.gateId), `unknown gate ${extra.gateId}`).toBe(true);
+      expect(ACT_IDS.has(extra.actId), `unknown act ${extra.actId}`).toBe(true);
+      expect(extra.body.length).toBeGreaterThan(0);
+      expect(extra.requirementText.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("role lenses cover all 7 essay acts for all 3 roles", async () => {
+    const { ROLE_LENSES } = await import("../role-lenses");
+    const essayActIds = ACTS.slice(1).map((a) => a.id);
+    for (const actId of essayActIds) {
+      const lenses = ROLE_LENSES[actId];
+      expect(lenses, `missing lenses for ${actId}`).toBeDefined();
+      for (const role of ["ANALYST", "OPERATOR", "COMMANDER"] as const) {
+        expect(lenses[role].focus.length).toBeGreaterThan(0);
+        expect(lenses[role].question.length).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
 describe("unlock gates", () => {
   it("gate ids are unique", () => {
     const ids = GATES.map((g) => g.id);

@@ -1,27 +1,25 @@
 import { useMemo } from "react";
-import { BookOpen } from "lucide-react";
-import { ACTS, EDUCATION_NODES, EXHIBITS } from "../data/dossier";
+import { ACTS, EXHIBITS } from "../data/dossier";
 import { useDossierStore } from "../store";
 import { assessedActIds } from "../store/derive";
-import type { SecurityRole } from "../types";
 import { BriefingBox, RedactionInline, Stamp } from "./dossier-components";
 import { EvidenceWall } from "./evidence-wall";
 import { ExhibitCard } from "./exhibit-card";
 import { InterfaceChecklist } from "./interface-checklist";
 import { PostureTerminal } from "./posture-terminal";
 import { CaptureSimulator } from "./capture-simulator";
+import { TerrainMap } from "./terrain-map";
 import { TwoFrontSimulator } from "./two-front-simulator";
 
 interface ActRendererProps {
   idx: number;
   completedActs: readonly number[];
-  role: SecurityRole;
   plainTextMode: boolean;
 }
 
 const proseClass = "prose prose-2xl max-w-none space-y-12 opacity-95 leading-relaxed font-serif text-ink-black/90";
 
-export function ActRenderer({ idx, completedActs, role, plainTextMode }: ActRendererProps) {
+export function ActRenderer({ idx, completedActs, plainTextMode }: ActRendererProps) {
   const responses = useDossierStore((s) => s.responses);
   const declassified = useMemo(
     () => assessedActIds({ responses }).includes(ACTS[idx]?.id ?? ""),
@@ -31,11 +29,6 @@ export function ActRenderer({ idx, completedActs, role, plainTextMode }: ActRend
     case 1:
       return (
         <div className={proseClass}>
-          {role === "COMMANDER" && (
-            <div className="bg-stamp-red/5 border-l-4 border-stamp-red p-6 font-mono text-[10px] uppercase tracking-widest text-stamp-red font-black">
-              COMMANDER_EYES_ONLY: The late Pope Francis — a die-hard San Lorenzo fan — would have been hard-pressed to call it a foul. The only lie a Pope could tell as God's representative on earth.
-            </div>
-          )}
                         <p>
                 In 1986, Diego Maradona scored the most infamous goal in football history. Argentina vs. England, World Cup
                 quarterfinal. The ball dropped into the box, Maradona rose, and it went in—off a hand the referee didn't see.
@@ -63,11 +56,6 @@ export function ActRenderer({ idx, completedActs, role, plainTextMode }: ActRend
     case 2:
       return (
         <div className={proseClass}>
-          {role !== "ANALYST" && (
-            <div className="bg-dossier-blue/5 border-l-4 border-dossier-blue p-6 font-mono text-[10px] uppercase tracking-widest text-dossier-blue font-black">
-              FIELD_NOTE: A good man is a very dangerous man who has that under voluntary control. The sector inverted it.
-            </div>
-          )}
                         <p>
                 There's a peculiar reflex in American tech: the faster someone builds something powerful, the more urgently they
                 perform uncertainty about whether it should exist at all. Caution is wisdom.{" "}
@@ -140,22 +128,7 @@ export function ActRenderer({ idx, completedActs, role, plainTextMode }: ActRend
     case 6:
       return (
         <div className={proseClass}>
-                        <div className="grid md:grid-cols-2 gap-12 my-12">
-                {EDUCATION_NODES.map((cat) => (
-                  <div key={cat.cat} className="p-8 border border-ink-black/10 bg-white/50 backdrop-blur-sm">
-                    <h5 className="font-mono text-xs font-black uppercase tracking-[0.2em] mb-4 text-stamp-red flex items-center gap-2">
-                      <BookOpen className="w-4 h-4" /> {cat.cat}
-                    </h5>
-                    <ul className="space-y-3 font-mono text-[10px] uppercase font-bold tracking-normal text-ink-black/60">
-                      {cat.items.map((item) => (
-                        <li key={item} className="flex gap-2 text-ink-black">
-                          <span className="text-star-gold">-</span> {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+                        <TerrainMap />
               <p>
                 Product designers need national security literacy because we are already assets in a national security
                 architecture. Not "should be." Already are. And this is the skill we already have, pointed at a domain we've been
@@ -167,12 +140,6 @@ export function ActRenderer({ idx, completedActs, role, plainTextMode }: ActRend
     case 7:
       return (
         <div className="space-y-16">
-          {role === "COMMANDER" && (
-            <div className="bg-stamp-red/5 border-l-4 border-stamp-red p-6 font-mono text-[10px] uppercase tracking-widest text-stamp-red font-black">
-              COMMANDER_EYES_ONLY: Jacobsen asked Waugh and Prado who would win if they had to kill each other. Each said "me."
-              Then Waugh came back: "Let me tell you how I would win. I'd cheat. I'd show up before the duel and I'd kill him."
-            </div>
-          )}
           <div className="prose prose-2xl max-w-none opacity-95 leading-relaxed font-serif text-ink-black/90 text-center">
             <p className="text-2xl font-medium max-w-2xl mx-auto italic opacity-80 text-ink-black">
               Restraint only means something if you're capable of doing otherwise. The myth can spark; it can't steer. The trance

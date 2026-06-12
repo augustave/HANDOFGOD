@@ -107,6 +107,15 @@ export function CommandPalette({
       action: () => switchPhase("DEBRIEF", "strategic-mirror"),
     },
     {
+      id: "view-terrain",
+      label: "View Strategic Terrain",
+      desc: "Jump to the knowledge graph",
+      icon: <Monitor className="w-4 h-4" />,
+      shortcut: "M",
+      active: false,
+      action: () => document.getElementById("terrain-map")?.scrollIntoView({ behavior: "smooth" }),
+    },
+    {
       id: "burn-session",
       label: "Burn Session",
       desc: "Erase the local profile and start clean",

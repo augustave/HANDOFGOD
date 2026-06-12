@@ -7,6 +7,9 @@ import { useAudioBriefing } from "./hooks/use-audio-briefing";
 import { useDossierProgress } from "./hooks/use-dossier-progress";
 import { useReducedMotion } from "./hooks/use-reduced-motion";
 import { ActBriefing, ActRenderer } from "./components/act-renderer";
+import { ActDeclassified } from "./components/declassified-block";
+import { AdversarialLens } from "./components/adversarial-lens";
+import { RoleLens } from "./components/role-lens";
 import { AssessmentCheckpoint } from "./components/assessment-checkpoint";
 import { ActScenarios } from "./components/scenario-player";
 import { cn, SecureLine, TornEdge } from "./components/dossier-components";
@@ -220,14 +223,16 @@ export default function App() {
                       {act.title.split(" ").slice(-1)[0]}
                     </span>
                   </h2>
+                  <RoleLens actId={act.id} />
+                  <AdversarialLens actId={act.id} />
                   {actIndex < ACTS.length - 1 && <ActBriefing idx={actIndex} />}
                   <ActRenderer
                     idx={actIndex}
                     completedActs={completedActs}
-                    role={role}
                     plainTextMode={plainTextMode}
                   />
                   <ActScenarios actId={act.id} />
+                  <ActDeclassified actId={act.id} />
                   <AssessmentCheckpoint actId={act.id} actCode={act.code} actIndex={actIndex} />
                 </div>
               </section>

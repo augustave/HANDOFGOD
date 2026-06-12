@@ -1,55 +1,48 @@
-# HAND_OF_GOD: The Case File
+# HAND_OF_GOD: Strategic Literacy Engine
 
-**HAND_OF_GOD: The Case File** is an interactive, high-fidelity web application that transforms a complex philosophical essay into a "declassified dossier" experience. Designed with a **"theatre of evidence"** aesthetic, it challenges users to navigate the dual-use infrastructure of the digital age across three distinct operational modes.
+**HAND_OF_GOD** is an interactive essay that evaluates its reader. V1 was a "declassified dossier" reading experience; V2 turns it into a **Strategic Literacy Simulator**: the doctrine doesn't just present itself — it assesses your understanding, adapts to your choices, and debriefs you with a personalized posture report. Everything is computed locally; no telemetry.
 
-## 📁 Project Structure: The 8 Acts
+## 🧭 The Journey: READ → ASSESS → OPERATE → DEBRIEF
 
-The experience is orchestrated through a strict 8-act narrative arc:
+The dock tracks four phases. Nothing blocks the essay — phases are progress tracks, and only the final report is earned:
 
-0. **AX-00: Culture is the Surface** – Initial briefing and narrative entry point.
-1. **AX-01: The Myth of Morality** – Analysis of morality as a containment protocol.
-2. **AX-02: The Authentic Narrative** – Investigation into the attention economy and capture loops.
-3. **AX-03: The Two-Front War** – A simulation of technical vs. psychological warfare.
-4. **AX-04: The Sovereign** – Tools for establishing independence from the network.
-5. **AX-05: Operational Interfaces** – Auditing the edge where human and machine meet.
-6. **AX-06: The Education** – Strategic literacy nodes for modern operators.
-7. **AX-07: Operate on Wake** – Final posture selection and mission deployment.
+- **READ** — The 8-act essay ("The Hand of God Problem"). Sections count as read after sustained presence (no fly-by scoring). READ ALL renders the full continuous article.
+- **ASSESS** — Field assessments after each act: three postures per question, no right answers. Committing logs hidden dimension weights, reveals the counter-read, and **declassifies that act's inline redactions**.
+- **OPERATE** — Four operation scenarios (the Disclosure Dilemma, the DeepSeek Moment, Chokepoint Response, the Seating Chart): situation → A/B/C → GAINED / EXPOSED / SECOND_ORDER tradeoffs. The simulators report real signals: the two-front sliders log projections, capture mitigations score operational thinking, and the posture terminal's commitment finally lands somewhere.
+- **DEBRIEF** — The **Strategic Mirror** unseals after reading 5 sections, logging 4 assessments, and running 1 operation: posture distribution (Watcher / Architect / Sovereign), 6-dimension literacy profile with exposure radar, strengths and blind spots with study recommendations, key judgments, an evidence trail of every scored response, and exports (print / Markdown / SVG card).
 
-## 🛠 Operational Modes & Roles
+## 📊 The Profile Engine
 
-Users can toggle their interaction model in real-time via the **Command Dock**:
+Six dimensions, scored 0–100 from raw signals (assessments ×1.0, scenarios ×1.5, simulators ×0.5, reading ×1.0), normalized against the content bank so scores can never leave range:
 
-### Experience Modes
-- **READ**: The full, deep-dive narrative experience with archival typography.
-- **BRIEF**: High-level summaries and bulleted takeaways for rapid consumption.
-- **OPERATE**: A high-fidelity HUD interface featuring scanlines, noise overlays, and real-time technical metadata.
+`Narrative Literacy · Institutional Trust · Capability Orientation · Strategic Realism · System Awareness · Operational Thinking`
 
-### Security Roles
-- **ANALYST**: Standard access to data and interactive simulations.
-- **OPERATOR**: Enhanced visibility into technical vulnerabilities.
-- **COMMANDER**: Top-secret clearance, revealing hidden "Eyes Only" briefing notes.
+The **exposure radar** in the system card plots `100 − literacy` per axis — the threat readout is finally real data. Raw signals persist to `localStorage` (versioned, migration-safe); derived scores are recomputed on every load and never trusted from disk. `BURN SESSION` (command palette) erases everything.
 
-## 🚀 Key Features
+## 🗺 Knowledge Layer
 
-- **Theatre of Evidence UI**: Utilizing paper textures, ink-black typography, stamp motifs, and "torn edge" dividers.
-- **Interactive Simulations**:
-  - **Threat Radar**: Live visualization of technical, cognitive, and structural risks.
-  - **Two-Front Simulator**: Adjust narrative resilience vs. technical defense levels.
-  - **Capture Simulator**: Identify and mitigate algorithmic capture vectors.
-- **Advanced Navigation**:
-  - **StarRailNav**: Visual progress tracking along the dossier spine.
-  - **Dossier-Tab Side Nav**: Physical-style tabs for rapid act switching.
-  - **Command Palette (CMD+K)**: Centralized orchestration for modes, roles, and search.
-- **Postures**: Final commitment terminal for choosing a operational stance (Watcher, Architect, Sovereign).
-- **Trance vs. Wake**: Global state transition that shifts the entire application aesthetic from archival "Trance" to high-contrast "Wake."
+- **Strategic Terrain** (act 6): an 8-node knowledge graph — Narratives, Information Warfare, Product Design, Infrastructure, Supply Chains, State Capacity, Manufacturing, Defense. Reading acts unlocks nodes; relationships illuminate when both endpoints unlock.
+- **Declassified extras**: case studies, counterarguments, and red-team memos against the essay's own thesis, gated behind explicit, named requirements — never a mystery lock.
+- **Adversarial lens**: every act has a `VIEW_AS_ADVERSARY` toggle — objective, three attack vectors, and the counter. Threat modeling by inversion.
+- **Role lenses**: ANALYST (understanding) / OPERATOR (action) / COMMANDER (second-order effects) reframe each act with a focus and a question to hold — same content, different lens, instant switching.
+
+## 🛠 Development
+
+```bash
+pnpm dev        # local dev server
+pnpm check      # typecheck + lint + unit tests + build (deploy gate)
+pnpm test:e2e   # Playwright smoke + journey tests
+```
+
+Deploys to GitHub Pages on push to `main`, gated on all checks. Append `?debug=profile` to inspect the live profile, posture distribution, and unlock state.
 
 ## 💻 Tech Stack
 
-- **Framework**: React 18
-- **Styling**: Tailwind CSS v4.0 (Utilizing modern CSS variables and `@theme`)
-- **Animations**: `motion/react` (Latest high-performance animation engine)
-- **Iconography**: Lucide React
-- **Typography**: Dual-system serif (archival) and mono (operational) font families.
+- **Framework**: React 18 + TypeScript (strict) + Vite
+- **State**: Zustand v5 with versioned localStorage persistence; pure scoring engine under `src/app/engine/`
+- **Content**: TS data modules under `src/app/data/` — questions, scenarios, terrain, lenses, adversary briefs — compile-checked and contract-tested so copy edits can't break scoring
+- **Styling**: Tailwind CSS v4 (`@theme` CSS variables), dossier visual identity: paper textures, stamps, torn edges, redaction bars
+- **Animation**: `motion/react` — user-triggered reveals only; zero standing intervals
 
 ---
-**[SESS_ID: 9942-AX]** // **HAND_OF_GOD** // **TOP_SECRET**
+**LOCAL_ONLY // NO_TELEMETRY** // **HAND_OF_GOD** // 2026
