@@ -9,6 +9,7 @@ import { useDossierProgress } from "./hooks/use-dossier-progress";
 import { useReducedMotion } from "./hooks/use-reduced-motion";
 import { ActBriefing, ActRenderer } from "./components/act-renderer";
 import { AssessmentCheckpoint } from "./components/assessment-checkpoint";
+import { ActScenarios } from "./components/scenario-player";
 import { cn, SecureLine, TornEdge } from "./components/dossier-components";
 import { CommandDock } from "./components/command-dock";
 import { DossierProgress } from "./components/dossier-progress";
@@ -237,6 +238,7 @@ export default function App() {
                     role={role}
                     plainTextMode={plainTextMode}
                   />
+                  <ActScenarios actId={act.id} />
                   <AssessmentCheckpoint actId={act.id} actCode={act.code} actIndex={actIndex} />
                 </div>
               </section>

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShieldAlert, Filter, Zap, RefreshCw } from "lucide-react";
+import { CAPTURE_MITIGATION_WEIGHTS } from "../engine/simulator-weights";
+import { useDossierStore } from "../store";
 import { cn } from "./dossier-components";
 
 export const CaptureSimulator = () => {
@@ -44,6 +46,11 @@ export const CaptureSimulator = () => {
     setDetectedNodes(prev => prev.filter(n => n !== node));
     setMitigated(prev => prev + 1);
     setDrift(prev => Math.max(0, prev - 15));
+    // Reports into the literacy profile; the store caps these at 3 per session.
+    useDossierStore.getState().recordSimulatorReport({
+      simulatorId: "capture",
+      weights: CAPTURE_MITIGATION_WEIGHTS,
+    });
   };
 
   return (

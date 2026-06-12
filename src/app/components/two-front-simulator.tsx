@@ -1,37 +1,59 @@
 import React, { useState, useMemo } from "react";
-import { Zap, Maximize2 } from "lucide-react";
+import { Zap, Maximize2, CheckCircle2 } from "lucide-react";
+import {
+  TWO_FRONT_OUTCOME_AFFINITY,
+  TWO_FRONT_OUTCOME_WEIGHTS,
+  type TwoFrontOutcome,
+} from "../engine/simulator-weights";
+import { useDossierStore } from "../store";
 import { cn } from "./dossier-components";
 
 export const TwoFrontSimulator = () => {
   const [techVal, setTechVal] = useState(45);
   const [narrativeVal, setNarrativeVal] = useState(30);
+  const recordSimulatorReport = useDossierStore((s) => s.recordSimulatorReport);
+  const hasLogged = useDossierStore((s) =>
+    s.simulatorReports.some((r) => r.simulatorId === "two-front"),
+  );
 
   const outcome = useMemo(() => {
-    if (techVal > 80 && narrativeVal < 30) return { 
-      status: "BRITTLE SUPERIORITY", 
+    if (techVal > 80 && narrativeVal < 30) return {
+      key: "BRITTLE_SUPERIORITY" as TwoFrontOutcome,
+      status: "BRITTLE SUPERIORITY",
       desc: "Maximum technical capability with zero social buy-in. Infrastructure is vulnerable to 'insider capture' and localized sabotage.",
       color: "text-orange-600",
       alert: "HIGH_RISK_OF_DETACHMENT"
     };
-    if (techVal < 30 && narrativeVal > 80) return { 
-      status: "IDEOLOGICAL STAGNATION", 
+    if (techVal < 30 && narrativeVal > 80) return {
+      key: "IDEOLOGICAL_STAGNATION" as TwoFrontOutcome,
+      status: "IDEOLOGICAL STAGNATION",
       desc: "Absolute cultural alignment but zero functional power. A community that believes but cannot act. Vulnerable to kinetic displacement.",
       color: "text-blue-600",
       alert: "FUNCTIONAL_PARALYSIS"
     };
-    if (techVal > 70 && narrativeVal > 70) return { 
-      status: "OPERATIONAL SYNERGY", 
+    if (techVal > 70 && narrativeVal > 70) return {
+      key: "OPERATIONAL_SYNERGY" as TwoFrontOutcome,
+      status: "OPERATIONAL SYNERGY",
       desc: "Sovereign infrastructure backed by a literate operator class. The systems and the people move as one unit.",
       color: "text-green-700",
       alert: "OPTIMAL_POSTURE"
     };
-    return { 
-      status: "ASYMMETRIC VULNERABILITY", 
+    return {
+      key: "ASYMMETRIC_VULNERABILITY" as TwoFrontOutcome,
+      status: "ASYMMETRIC VULNERABILITY",
       desc: "Standard operating posture. Neither the systems nor the culture are hardened against targeted decay.",
       color: "text-gray-500",
       alert: "STASIS_MONITORING"
     };
   }, [techVal, narrativeVal]);
+
+  const logProjection = () => {
+    recordSimulatorReport({
+      simulatorId: "two-front",
+      weights: TWO_FRONT_OUTCOME_WEIGHTS[outcome.key],
+      postureAffinity: TWO_FRONT_OUTCOME_AFFINITY[outcome.key],
+    });
+  };
 
   return (
     <div className="my-16 p-8 md:p-12 bg-white border-2 border-ink-black shadow-[16px_16px_0px_rgba(0,0,0,0.04)] relative overflow-hidden">
@@ -93,6 +115,20 @@ export const TwoFrontSimulator = () => {
           <p className="text-base font-serif leading-relaxed opacity-80 italic border-t border-ink-black/5 pt-6 text-ink-black">
             "{outcome.desc}"
           </p>
+          <button
+            type="button"
+            onClick={logProjection}
+            data-testid="log-projection"
+            className={cn(
+              "mt-6 w-full py-3 font-mono text-[10px] font-black uppercase tracking-[0.3em] transition-colors flex items-center justify-center gap-2 cursor-pointer",
+              hasLogged
+                ? "bg-transparent border-2 border-ink-black/20 text-ink-black/50 hover:border-ink-black hover:text-ink-black"
+                : "bg-ink-black text-white hover:bg-stamp-red",
+            )}
+          >
+            {hasLogged && <CheckCircle2 className="w-3.5 h-3.5" />}
+            {hasLogged ? "PROJECTION_LOGGED // RELOG" : "LOG_PROJECTION"}
+          </button>
         </div>
       </div>
     </div>

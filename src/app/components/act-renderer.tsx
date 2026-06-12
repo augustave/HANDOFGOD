@@ -10,7 +10,6 @@ import { ExhibitCard } from "./exhibit-card";
 import { InterfaceChecklist } from "./interface-checklist";
 import { PostureTerminal } from "./posture-terminal";
 import { CaptureSimulator } from "./capture-simulator";
-import { SovereignKeyGenerator } from "./sovereign-key-generator";
 import { TwoFrontSimulator } from "./two-front-simulator";
 import { BriefSummary } from "./brief-summary";
 
@@ -142,7 +141,6 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 <RedactionInline revealed={declassified} permanent plainText={plainTextMode}>recognizing intent</RedactionInline>.
                 Treating hostile and friendly actors as morally equivalent isn't sophistication. It's negligence dressed as purity.
               </p>
-              <SovereignKeyGenerator />
             </>
           )}
           {completedActs.includes(4) && <Stamp text="SOVEREIGN" rotated={-10} />}

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Terminal, Shield, Eye, Zap, CheckCircle2, ArrowRight, Lock } from "lucide-react";
+import { POSTURES, type Posture as PostureId } from "../engine/weights";
+import { useDossierStore } from "../store";
 import { cn } from "./dossier-components";
 
 interface Posture {
@@ -39,10 +41,22 @@ const postures: Posture[] = [
   }
 ];
 
+function isPostureId(value: string): value is PostureId {
+  return (POSTURES as readonly string[]).includes(value);
+}
+
 export function PostureTerminal() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isSigned, setIsSigned] = useState(false);
   const [signature, setSignature] = useState("");
+  const commitPosture = useDossierStore((s) => s.commitPosture);
+
+  const commit = () => {
+    if (selectedId !== null && isPostureId(selectedId)) {
+      commitPosture(selectedId, signature);
+    }
+    setIsSigned(true);
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto my-24 border-4 border-ink-black bg-white shadow-[20px_20px_0px_rgba(0,0,0,0.04)] overflow-hidden">
@@ -142,7 +156,7 @@ export function PostureTerminal() {
                 <button 
                   type="button"
                   disabled={!signature.trim()}
-                  onClick={() => setIsSigned(true)}
+                  onClick={commit}
                   className="w-full py-6 bg-stamp-red text-white font-mono font-black text-xs uppercase tracking-[0.4em] shadow-[8px_8px_0px_rgba(0,0,0,0.04)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                 >
                   COMMIT_TO_POSTURE
@@ -173,15 +187,9 @@ export function PostureTerminal() {
         </div>
       </div>
       
-      <div className="bg-ink-black/5 p-4 border-t-4 border-ink-black flex justify-between items-center px-8 font-mono text-[8px] font-bold text-gray-400">
-        <div className="flex gap-4">
-          <span>LAT: 37.7749 N</span>
-          <span>LNG: 122.4194 W</span>
-        </div>
-        <div className="flex gap-4">
-          <span>THREAT_LEVEL: OMEGA</span>
-          <span className="text-stamp-red motion-safe:animate-pulse">● LIVE_FEED_ACTIVE</span>
-        </div>
+      <div className="bg-ink-black/5 p-4 border-t-4 border-ink-black flex justify-between items-center px-8 font-mono text-[8px] font-bold text-gray-500">
+        <span>POSTURE_COMMIT // FEEDS_DEBRIEF_REPORT</span>
+        <span>PROFILE: LOCAL_ONLY // NO_TELEMETRY</span>
       </div>
     </div>
   );
