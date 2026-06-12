@@ -3,23 +3,21 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff, Volume2, VolumeX, Lock, Unlock, FileText, ScrollText, Share2, Download, X, Menu } from "lucide-react";
 import { cn } from "./dossier-components";
+import { JourneyTracker } from "./journey-tracker";
 import { useDossierStore } from "../store";
-import type { ExperienceMode, SecurityRole } from "../types";
+import type { SecurityRole } from "../types";
 
 interface CommandDockProps {
-  mode: ExperienceMode;
-  setMode: (m: ExperienceMode) => void;
   onShare?: () => void;
 }
 
-const modes: ExperienceMode[] = ["READ", "BRIEF", "OPERATE"];
 const roles: SecurityRole[] = ["ANALYST", "OPERATOR", "COMMANDER"];
 
 function isSecurityRole(value: string): value is SecurityRole {
   return roles.includes(value as SecurityRole);
 }
 
-export const CommandDock = ({ mode, setMode, onShare }: CommandDockProps) => {
+export const CommandDock = ({ onShare }: CommandDockProps) => {
   const plainTextMode = useDossierStore((s) => s.plainTextMode);
   const setPlainTextMode = useDossierStore((s) => s.setPlainTextMode);
   const isAudioMode = useDossierStore((s) => s.isAudioMode);
@@ -32,6 +30,7 @@ export const CommandDock = ({ mode, setMode, onShare }: CommandDockProps) => {
   const setIsFullRead = useDossierStore((s) => s.setIsFullRead);
   const role = useDossierStore((s) => s.role);
   const setRole = useDossierStore((s) => s.setRole);
+  const phase = useDossierStore((s) => s.phase);
   const [mobileExpanded, setMobileExpanded] = useState(false);
 
   return createPortal(
@@ -57,22 +56,7 @@ export const CommandDock = ({ mode, setMode, onShare }: CommandDockProps) => {
             <option value="COMMANDER">Role: COMMANDER</option>
           </select>
         </div>
-        <div className="flex items-center bg-white/5 px-3 py-1.5 gap-4 border-r border-white/10">
-          {modes.map((m) => (
-            <button
-              type="button"
-              key={m}
-              onClick={() => setMode(m)}
-              aria-pressed={mode === m}
-              className={cn(
-                "font-mono text-[9px] font-black tracking-widest px-2 py-1 transition-colors uppercase cursor-pointer",
-                mode === m ? "text-star-gold" : "text-gray-500 hover:text-white"
-              )}
-            >
-              {m}
-            </button>
-          ))}
-        </div>
+        <JourneyTracker variant="desktop" />
 
         <div className="flex items-center gap-2 px-4">
           <button
@@ -183,25 +167,10 @@ export const CommandDock = ({ mode, setMode, onShare }: CommandDockProps) => {
                   </div>
                 </div>
 
-                {/* Mode selector */}
+                {/* Journey phases */}
                 <div className="space-y-2">
-                  <div className="font-mono text-[8px] font-black text-gray-500 uppercase tracking-widest">MODE</div>
-                  <div className="flex gap-2">
-                    {modes.map((m) => (
-                      <button
-                        type="button"
-                        key={m}
-                        onClick={() => setMode(m)}
-                        aria-pressed={mode === m}
-                        className={cn(
-                          "flex-1 py-2 font-mono text-[9px] font-black uppercase tracking-widest transition-colors cursor-pointer border",
-                          mode === m ? "bg-star-gold text-ink-black border-star-gold" : "text-gray-500 border-white/10 hover:text-white"
-                        )}
-                      >
-                        {m}
-                      </button>
-                    ))}
-                  </div>
+                  <div className="font-mono text-[8px] font-black text-gray-500 uppercase tracking-widest">JOURNEY</div>
+                  <JourneyTracker variant="mobile" />
                 </div>
 
                 {/* Toggles grid */}
@@ -297,7 +266,7 @@ export const CommandDock = ({ mode, setMode, onShare }: CommandDockProps) => {
         <div className="bg-ink-black border-t border-white/10 p-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="font-mono text-[9px] font-black text-white uppercase tracking-widest">
-              {mode}
+              {phase}
             </div>
             <div className="w-px h-3 bg-white/20" />
             <div className="font-mono text-[9px] font-black text-gray-500 uppercase tracking-widest">

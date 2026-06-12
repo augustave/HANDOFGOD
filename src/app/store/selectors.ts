@@ -4,7 +4,6 @@
 
 import { DIMENSIONS, type Dimension } from "../engine/weights";
 import { assessedActIds } from "./derive";
-import { journeyProgress } from "./slices/journey-slice";
 import type { StoreState } from "./types";
 
 /**
@@ -31,10 +30,6 @@ export function selectProfile(state: StoreState) {
 
 export function selectPostureDistribution(state: StoreState) {
   return state.postureDistribution;
-}
-
-export function selectJourneyProgress(state: StoreState) {
-  return journeyProgress(state);
 }
 
 export function selectIsUnlocked(id: string) {

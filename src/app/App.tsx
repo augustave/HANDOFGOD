@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { Lock, Search } from "lucide-react";
 import { ACTS, SYSTEM_CARD_STATES } from "./data/dossier";
 import { hasPersistedSession, useDossierStore } from "./store";
-import type { ExperienceMode } from "./types";
 import { useAudioBriefing } from "./hooks/use-audio-briefing";
 import { useDossierProgress } from "./hooks/use-dossier-progress";
 import { useReducedMotion } from "./hooks/use-reduced-motion";
@@ -12,8 +11,8 @@ import { AssessmentCheckpoint } from "./components/assessment-checkpoint";
 import { ActScenarios } from "./components/scenario-player";
 import { cn, SecureLine, TornEdge } from "./components/dossier-components";
 import { CommandDock } from "./components/command-dock";
-import { DossierProgress } from "./components/dossier-progress";
 import { FullArticle } from "./components/full-article";
+import { StrategicMirror } from "./components/strategic-mirror";
 import { HeroSection } from "./components/hero-section";
 import { isProfileDebugEnabled, ProfileDebug } from "./components/profile-debug";
 import { SelectionTooltip } from "./components/selection-tooltip";
@@ -37,7 +36,7 @@ export default function App() {
   const isFullRead = useDossierStore((s) => s.isFullRead);
   const setIsFullRead = useDossierStore((s) => s.setIsFullRead);
   const role = useDossierStore((s) => s.role);
-  const [mode, setMode] = useState<ExperienceMode>("READ");
+  const phase = useDossierStore((s) => s.phase);
   const [shareText, setShareText] = useState("");
   const [isShareOpen, setIsShareOpen] = useState(false);
   // Boot splash only on first-ever visits; returning sessions skip straight in.
@@ -126,7 +125,7 @@ export default function App() {
         </div>
       )}
 
-      {mode === "OPERATE" && <div className="grain-overlay" aria-hidden="true" />}
+      {phase === "OPERATE" && <div className="grain-overlay" aria-hidden="true" />}
 
       {!plainTextMode && (
         <div className="fixed left-2 top-0 bottom-0 flex flex-col justify-around py-20 pointer-events-none z-[60] opacity-20" aria-hidden="true">
@@ -163,7 +162,7 @@ export default function App() {
         className={cn(
           "fixed top-0 left-0 right-0 z-[100] px-5 md:px-10 py-5 md:py-6 flex justify-between items-center transition-all duration-700 backdrop-blur-md",
           isFocusMode ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100",
-          mode === "OPERATE" ? "bg-ink-black/90 text-white border-b border-stamp-red/30" : "bg-white/80 text-ink-black border-b border-ink-black/5 mix-blend-multiply",
+          phase === "OPERATE" ? "bg-ink-black/90 text-white border-b border-stamp-red/30" : "bg-white/80 text-ink-black border-b border-ink-black/5 mix-blend-multiply",
         )}
       >
         <div className="flex items-center gap-6 min-w-0">
@@ -173,13 +172,13 @@ export default function App() {
             onClick={() => window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" })}
             aria-label="Return to top of dossier"
           >
-            <span className={cn("w-5 h-5 flex items-center justify-center text-white text-[8px]", mode === "OPERATE" ? "bg-star-gold" : "bg-stamp-red")}>!</span>
+            <span className={cn("w-5 h-5 flex items-center justify-center text-white text-[8px]", phase === "OPERATE" ? "bg-star-gold" : "bg-stamp-red")}>!</span>
             <span className="truncate">HAND_OF_GOD</span>
           </button>
           <div
             className={cn(
               "hidden md:flex items-center gap-4 border-l pl-6 font-mono text-[9px] font-black uppercase tracking-[0.2em]",
-              mode === "OPERATE" ? "border-white/10 text-stamp-red" : "border-ink-black/10 text-gray-500",
+              phase === "OPERATE" ? "border-white/10 text-stamp-red" : "border-ink-black/10 text-gray-500",
             )}
           >
             <span className="flex items-center gap-1.5">
@@ -193,7 +192,7 @@ export default function App() {
           onClick={() => setIsPaletteOpen(true)}
           className={cn(
             "hidden lg:flex items-center gap-4 font-mono text-[9px] font-black uppercase tracking-widest transition-colors bg-transparent border-none cursor-pointer",
-            mode === "OPERATE" ? "text-star-gold/50 hover:text-star-gold" : "text-gray-400 hover:text-ink-black",
+            phase === "OPERATE" ? "text-star-gold/50 hover:text-star-gold" : "text-gray-400 hover:text-ink-black",
           )}
           aria-label="Open command palette"
         >
@@ -234,7 +233,6 @@ export default function App() {
                   <ActRenderer
                     idx={actIndex}
                     completedActs={completedActs}
-                    mode={mode}
                     role={role}
                     plainTextMode={plainTextMode}
                   />
@@ -248,7 +246,7 @@ export default function App() {
           )}
 
           <footer className="pt-32 pb-64 text-center space-y-8">
-            <DossierProgress acts={ACTS} completedActs={completedActs} activeAct={activeAct} mode={mode} role={role} />
+            <StrategicMirror />
             <div className="w-px h-24 bg-ink-black/20 mx-auto" />
             <div className="font-mono text-[10px] text-gray-400 uppercase tracking-[0.3em] md:tracking-[0.5em]">
               END_OF_TRANSMISSION // HAND_OF_GOD // 2026
@@ -264,10 +262,8 @@ export default function App() {
       </main>
 
       <CommandDock
-        mode={mode}
-        setMode={setMode}
         onShare={() => {
-          setShareText(`[DOSSIER_SUMMARY] Active Act: AX-0${activeAct} // Mode: ${mode} // Role: ${role}. Posture: SOVEREIGN.`);
+          setShareText(`[DOSSIER_SUMMARY] Active Act: AX-0${activeAct} // Phase: ${phase} // Role: ${role}. Posture: SOVEREIGN.`);
           setIsShareOpen(true);
         }}
       />
@@ -279,10 +275,10 @@ export default function App() {
         }}
       />
 
-      <SubliminalFeed isActive={!reducedMotion && (isAudioMode || mode === "OPERATE")} />
+      <SubliminalFeed isActive={!reducedMotion && (isAudioMode || phase === "OPERATE")} />
 
       <AnimatePresence>
-        {mode === "OPERATE" && !reducedMotion && (
+        {phase === "OPERATE" && !reducedMotion && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -312,13 +308,11 @@ export default function App() {
           onClose={() => setIsPaletteOpen(false)}
           acts={ACTS}
           onNavigate={(id) => document.getElementById(`act-${id}`)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" })}
-          onToggleMode={(m) => setMode(m)}
           onToggleWake={() => setIsWoke(!isWoke)}
           onToggleAudio={() => setIsAudioMode(!isAudioMode)}
           onToggleFocus={() => setIsFocusMode(!isFocusMode)}
           onToggleFullRead={() => setIsFullRead(!isFullRead)}
           onTogglePlainText={() => setPlainTextMode(!plainTextMode)}
-          currentMode={mode}
           isWoke={isWoke}
           isAudioMode={isAudioMode}
           isFocusMode={isFocusMode}

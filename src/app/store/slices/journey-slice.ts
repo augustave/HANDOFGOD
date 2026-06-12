@@ -7,6 +7,19 @@ import type { JourneyPhase, JourneySlice, StoreState } from "../types";
 
 const ESSAY_ACT_INDICES = [1, 2, 3, 4, 5, 6, 7] as const;
 
+/** Pure debrief-unlock predicate over primitive counts (loop-safe for selectors). */
+export function isDebriefUnlocked(counts: {
+  actsReadCount: number;
+  responsesCount: number;
+  operationsCount: number;
+}): boolean {
+  return (
+    counts.actsReadCount >= 5 &&
+    counts.responsesCount >= 4 &&
+    counts.operationsCount >= 1
+  );
+}
+
 /** Gating requirements for first-run phase progression. */
 export function phaseAvailable(state: StoreState, phase: JourneyPhase): boolean {
   if (state.completedAt !== null) return true; // free navigation after first debrief
@@ -19,11 +32,11 @@ export function phaseAvailable(state: StoreState, phase: JourneyPhase): boolean 
     case "OPERATE":
       return state.responses.length >= Math.min(5, ASSESSMENT_QUESTIONS.length);
     case "DEBRIEF":
-      return (
-        state.actsRead.length >= 5 &&
-        state.responses.length >= 4 &&
-        state.scenarioCommits.length + (state.committedPosture ? 1 : 0) >= 1
-      );
+      return isDebriefUnlocked({
+        actsReadCount: state.actsRead.length,
+        responsesCount: state.responses.length,
+        operationsCount: state.scenarioCommits.length + (state.committedPosture ? 1 : 0),
+      });
   }
 }
 

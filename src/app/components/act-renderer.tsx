@@ -3,7 +3,7 @@ import { BookOpen } from "lucide-react";
 import { ACTS, EDUCATION_NODES, EXHIBITS } from "../data/dossier";
 import { useDossierStore } from "../store";
 import { assessedActIds } from "../store/derive";
-import type { ExperienceMode, SecurityRole } from "../types";
+import type { SecurityRole } from "../types";
 import { BriefingBox, RedactionInline, Stamp } from "./dossier-components";
 import { EvidenceWall } from "./evidence-wall";
 import { ExhibitCard } from "./exhibit-card";
@@ -11,19 +11,17 @@ import { InterfaceChecklist } from "./interface-checklist";
 import { PostureTerminal } from "./posture-terminal";
 import { CaptureSimulator } from "./capture-simulator";
 import { TwoFrontSimulator } from "./two-front-simulator";
-import { BriefSummary } from "./brief-summary";
 
 interface ActRendererProps {
   idx: number;
   completedActs: readonly number[];
-  mode: ExperienceMode;
   role: SecurityRole;
   plainTextMode: boolean;
 }
 
 const proseClass = "prose prose-2xl max-w-none space-y-12 opacity-95 leading-relaxed font-serif text-ink-black/90";
 
-export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: ActRendererProps) {
+export function ActRenderer({ idx, completedActs, role, plainTextMode }: ActRendererProps) {
   const responses = useDossierStore((s) => s.responses);
   const declassified = useMemo(
     () => assessedActIds({ responses }).includes(ACTS[idx]?.id ?? ""),
@@ -38,11 +36,7 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
               COMMANDER_EYES_ONLY: The late Pope Francis — a die-hard San Lorenzo fan — would have been hard-pressed to call it a foul. The only lie a Pope could tell as God's representative on earth.
             </div>
           )}
-          {mode === "BRIEF" ? (
-            <BriefSummary summaryKey="myth_of_morality" />
-          ) : (
-            <>
-              <p>
+                        <p>
                 In 1986, Diego Maradona scored the most infamous goal in football history. Argentina vs. England, World Cup
                 quarterfinal. The ball dropped into the box, Maradona rose, and it went in—off a hand the referee didn't see.
                 Later he called it <em>La Mano de Dios</em>: the Hand of God. People still argue about that moment like it's
@@ -63,8 +57,6 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 compresses complexity into a story that restores agency.
               </p>
               <ExhibitCard {...EXHIBITS.myth_of_morality} />
-            </>
-          )}
           {completedActs.includes(1) && <Stamp text="VERIFIED" rotated={-5} />}
         </div>
       );
@@ -76,11 +68,7 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
               FIELD_NOTE: A good man is a very dangerous man who has that under voluntary control. The sector inverted it.
             </div>
           )}
-          {mode === "BRIEF" ? (
-            <BriefSummary summaryKey="authentic_narrative" />
-          ) : (
-            <>
-              <p>
+                        <p>
                 There's a peculiar reflex in American tech: the faster someone builds something powerful, the more urgently they
                 perform uncertainty about whether it should exist at all. Caution is wisdom.{" "}
                 <RedactionInline revealed={declassified} plainText={plainTextMode}>Performative caution is something else</RedactionInline>
@@ -94,19 +82,13 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
               </p>
               <CaptureSimulator />
               <ExhibitCard {...EXHIBITS.authentic_narrative} />
-            </>
-          )}
           {completedActs.includes(2) && <Stamp text="CLASSIFIED" rotated={3} />}
         </div>
       );
     case 3:
       return (
         <div className={proseClass}>
-          {mode === "BRIEF" ? (
-            <BriefSummary summaryKey="two_front" />
-          ) : (
-            <>
-              <p>
+                        <p>
                 A serious intelligence operation has at least two components: Tech, and PSYOP. We can field the best cyberwarfare
                 units in the world and run the most advanced AI labs—win the technology side completely—and still lose, because
                 the second front targets something no firewall covers: a society's willingness to defend its own advantage.
@@ -116,18 +98,12 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
               <p className="text-xl opacity-70 border-l-4 border-stamp-red pl-8 italic font-black leading-tight uppercase tracking-normal py-4 bg-stamp-red/5 text-ink-black">
                 "The simplest way to beat a strong country is to convince it to sabotage itself."
               </p>
-            </>
-          )}
         </div>
       );
     case 4:
       return (
         <div className={proseClass}>
-          {mode === "BRIEF" ? (
-            <BriefSummary summaryKey="sovereign" />
-          ) : (
-            <>
-              <p>
+                        <p>
                 If you're designing communication infrastructure, cloud platforms, AI systems, social networks, supply chain
                 software—anything that shapes coordination at scale—you are not "just" building a product. You're building{" "}
                 <RedactionInline revealed={declassified} plainText={plainTextMode}>dual-use infrastructure</RedactionInline>.
@@ -141,19 +117,13 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 <RedactionInline revealed={declassified} permanent plainText={plainTextMode}>recognizing intent</RedactionInline>.
                 Treating hostile and friendly actors as morally equivalent isn't sophistication. It's negligence dressed as purity.
               </p>
-            </>
-          )}
           {completedActs.includes(4) && <Stamp text="SOVEREIGN" rotated={-10} />}
         </div>
       );
     case 5:
       return (
         <div className={proseClass}>
-          {mode === "BRIEF" ? (
-            <BriefSummary summaryKey="operational_interfaces" />
-          ) : (
-            <>
-              <p>
+                        <p>
                 My father worked Protocol in the Foreign Service. Seating charts were his chess. Positions at an inauguration
                 aren't made off-the-cuff; they're composed—for foreign governments—the way a sentence is composed. Putting that
                 stack of tech CEOs in the frame was a message: AI is a state priority now. It was the equivalent of{" "}
@@ -165,18 +135,12 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 need foreign enemies—you've already done their work. Unity in 2026 isn't chants. It's interfaces.
               </p>
               <InterfaceChecklist />
-            </>
-          )}
         </div>
       );
     case 6:
       return (
         <div className={proseClass}>
-          {mode === "BRIEF" ? (
-            <BriefSummary summaryKey="education" />
-          ) : (
-            <>
-              <div className="grid md:grid-cols-2 gap-12 my-12">
+                        <div className="grid md:grid-cols-2 gap-12 my-12">
                 {EDUCATION_NODES.map((cat) => (
                   <div key={cat.cat} className="p-8 border border-ink-black/10 bg-white/50 backdrop-blur-sm">
                     <h5 className="font-mono text-xs font-black uppercase tracking-[0.2em] mb-4 text-stamp-red flex items-center gap-2">
@@ -198,8 +162,6 @@ export function ActRenderer({ idx, completedActs, mode, role, plainTextMode }: A
                 avoiding: sitting with messy, adversarial, ambiguous systems without flinching—and shipping anyway. Discomfort?
                 Good. Ambiguity? Good. Pressure? Good. The gap isn't aptitude. It's literacy. Comfort is not a strategy.
               </p>
-            </>
-          )}
         </div>
       );
     case 7:

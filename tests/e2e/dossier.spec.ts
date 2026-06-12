@@ -24,7 +24,7 @@ test("mobile command dock fits and expands", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /the hand\s+of god/i })).toBeVisible();
 
   await page.getByLabel("Open command dock").click({ force: true });
-  await expect(page.getByRole("button", { name: "BRIEF", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "BRIEF", exact: true }).click({ force: true });
-  await expect(page.getByText("BRIEF", { exact: true }).last()).toBeVisible();
+  await expect(page.getByRole("button", { name: /DEBRIEF/ }).last()).toBeVisible();
+  await page.getByRole("button", { name: /DEBRIEF/ }).last().click({ force: true });
+  await expect(page.getByText("MIRROR_SEALED")).toBeVisible();
 });

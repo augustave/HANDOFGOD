@@ -2,6 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 import { ACTS } from "../../data/dossier";
+import { ASSESSMENT_QUESTIONS } from "../../data/assessments";
+import { useDossierStore } from "../../store";
 import { CommandPalette } from "../command-palette";
 
 describe("CommandPalette", () => {
@@ -17,22 +19,17 @@ describe("CommandPalette", () => {
     expect(onNavigate).toHaveBeenCalledWith("two_front");
   });
 
-  it("executes tactical actions by keyboard", async () => {
+  it("switches journey phase from the palette once requirements are met", async () => {
     const user = userEvent.setup();
-    const onToggleMode = vi.fn();
-    render(
-      <CommandPalette
-        isOpen
-        onClose={vi.fn()}
-        acts={ACTS}
-        onNavigate={vi.fn()}
-        onToggleMode={onToggleMode}
-      />,
-    );
+    // Unlock OPERATE: requires 5 logged assessments on a first run.
+    for (const question of ASSESSMENT_QUESTIONS.slice(0, 5)) {
+      useDossierStore.getState().answerQuestion(question, question.options[0].id);
+    }
+    render(<CommandPalette isOpen onClose={vi.fn()} acts={ACTS} onNavigate={vi.fn()} />);
 
-    await user.type(screen.getByLabelText("Search dossier commands"), "operate");
-    await user.keyboard("{ArrowDown}{Enter}");
+    await user.type(screen.getByLabelText("Search dossier commands"), "operate phase");
+    await user.keyboard("{Enter}");
 
-    expect(onToggleMode).toHaveBeenCalledWith("OPERATE");
+    expect(useDossierStore.getState().phase).toBe("OPERATE");
   });
 });

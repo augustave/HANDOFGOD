@@ -5,8 +5,6 @@ import { CommandDock } from "../command-dock";
 import { useDossierStore } from "../../store";
 
 const defaultProps = {
-  mode: "READ" as const,
-  setMode: vi.fn(),
   onShare: vi.fn(),
 };
 
@@ -15,12 +13,14 @@ describe("CommandDock", () => {
     vi.clearAllMocks();
   });
 
-  it("changes mode, role, and core toggles", async () => {
+  it("changes phase, role, and core toggles", async () => {
     const user = userEvent.setup();
+    // ASSESS is gated until something has been read.
+    useDossierStore.getState().markActRead(1);
     render(<CommandDock {...defaultProps} />);
 
-    await user.click(screen.getAllByRole("button", { name: "BRIEF" })[0]);
-    expect(defaultProps.setMode).toHaveBeenCalledWith("BRIEF");
+    await user.click(screen.getAllByRole("button", { name: /^ASSESS/ })[0]);
+    expect(useDossierStore.getState().phase).toBe("ASSESS");
 
     await user.selectOptions(screen.getByLabelText("Security role"), "COMMANDER");
     expect(useDossierStore.getState().role).toBe("COMMANDER");

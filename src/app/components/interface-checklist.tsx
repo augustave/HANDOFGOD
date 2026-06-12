@@ -1,20 +1,25 @@
 import React, { useState } from "react";
 import { Terminal, CheckCircle2, Download, Copy } from "lucide-react";
+import { useDossierStore } from "../store";
 import { cn } from "./dossier-components";
 
+export const CHECKLIST_ITEMS = [
+  { id: "audit-drift", text: "Audit algorithmic drift in daily tools" },
+  { id: "sovereign-encryption", text: "Deploy sovereign encryption for key nodes" },
+  { id: "manual-friction", text: "Inject manual friction into high-load workflows" },
+  { id: "transparency-logs", text: "Establish protocol-level transparency logs" },
+  { id: "literacy-plan", text: "Draft literacy plan for secondary operators" },
+] as const;
+
 export const InterfaceChecklist = () => {
-  const [items, setItems] = useState([
-    { id: 1, text: "Audit algorithmic drift in daily tools", checked: false },
-    { id: 2, text: "Deploy sovereign encryption for key nodes", checked: false },
-    { id: 3, text: "Inject manual friction into high-load workflows", checked: false },
-    { id: 4, text: "Establish protocol-level transparency logs", checked: false },
-    { id: 5, text: "Draft literacy plan for secondary operators", checked: false },
-  ]);
+  const checkedItems = useDossierStore((s) => s.checkedItems);
+  const toggle = useDossierStore((s) => s.toggleChecklistItem);
   const [status, setStatus] = useState("");
 
-  const toggle = (id: number) => {
-    setItems(items.map(item => item.id === id ? { ...item, checked: !item.checked } : item));
-  };
+  const items = CHECKLIST_ITEMS.map((item) => ({
+    ...item,
+    checked: checkedItems.includes(item.id),
+  }));
 
   const checklistText = items.map((item) => `${item.checked ? "[x]" : "[ ]"} ${item.text}`).join("\n");
 
@@ -69,7 +74,7 @@ export const InterfaceChecklist = () => {
           onClick={() => window.print()}
           className="flex items-center gap-3 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-star-gold hover:text-white transition-colors group bg-transparent border-none cursor-pointer"
         >
-          <Download className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" /> EXPORT_PLAN.PDF
+          <Download className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" /> PRINT_PLAN
         </button>
         <button
           type="button"

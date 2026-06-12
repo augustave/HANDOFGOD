@@ -2,19 +2,19 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Command, ArrowRight, Zap, Volume2, Shield, FileText, Monitor, Focus, Unlock, Lock, Crosshair, BookOpen, ScrollText, TerminalIcon } from "lucide-react";
 import { cn } from "./dossier-components";
-import type { DossierAct, ExperienceMode } from "../types";
+import { burnSession, useDossierStore } from "../store";
+import type { JourneyPhase } from "../store/types";
+import type { DossierAct } from "../types";
 
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
   acts: DossierAct[];
   onNavigate: (id: string) => void;
-  onToggleMode?: (mode: ExperienceMode) => void;
   onToggleWake?: () => void;
   onToggleAudio?: () => void;
   onToggleFocus?: () => void;
   onTogglePlainText?: () => void;
-  currentMode?: ExperienceMode;
   isWoke?: boolean;
   isAudioMode?: boolean;
   isFocusMode?: boolean;
@@ -41,18 +41,22 @@ export function CommandPalette({
   onClose,
   acts,
   onNavigate,
-  onToggleMode,
   onToggleWake,
   onToggleAudio,
   onToggleFocus,
   onTogglePlainText,
-  currentMode = "READ",
   isWoke = false,
   isAudioMode = false,
   isFocusMode = false,
   onToggleFullRead,
   isFullRead = false,
 }: CommandPaletteProps) {
+  const currentPhase = useDossierStore((s) => s.phase);
+  const requestPhase = useDossierStore((s) => s.requestPhase);
+  const switchPhase = (phase: JourneyPhase, anchorId?: string) => {
+    requestPhase(phase);
+    if (anchorId) document.getElementById(anchorId)?.scrollIntoView({ behavior: "smooth" });
+  };
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -67,31 +71,49 @@ export function CommandPalette({
 
   const actions = [
     {
-      id: "mode-read",
-      label: "Switch to READ Mode",
-      desc: "Full immersive reading experience",
+      id: "phase-read",
+      label: "Switch to READ Phase",
+      desc: "Narrative intake — the essay itself",
       icon: <BookOpen className="w-4 h-4" />,
       shortcut: "R",
-      active: currentMode === "READ",
-      action: () => onToggleMode?.("READ"),
+      active: currentPhase === "READ",
+      action: () => switchPhase("READ"),
     },
     {
-      id: "mode-brief",
-      label: "Switch to BRIEF Mode",
-      desc: "Condensed intelligence summary",
+      id: "phase-assess",
+      label: "Resume Assessment",
+      desc: "Jump to the next unanswered field assessment",
       icon: <FileText className="w-4 h-4" />,
-      shortcut: "B",
-      active: currentMode === "BRIEF",
-      action: () => onToggleMode?.("BRIEF"),
+      shortcut: "A",
+      active: currentPhase === "ASSESS",
+      action: () => switchPhase("ASSESS"),
     },
     {
-      id: "mode-operate",
-      label: "Switch to OPERATE Mode",
-      desc: "Reveal redacted content on hover",
+      id: "phase-operate",
+      label: "Switch to OPERATE Phase",
+      desc: "Run the operation scenarios",
       icon: <Zap className="w-4 h-4" />,
       shortcut: "O",
-      active: currentMode === "OPERATE",
-      action: () => onToggleMode?.("OPERATE"),
+      active: currentPhase === "OPERATE",
+      action: () => switchPhase("OPERATE"),
+    },
+    {
+      id: "open-debrief",
+      label: "Open Debrief",
+      desc: "Jump to the strategic mirror",
+      icon: <Crosshair className="w-4 h-4" />,
+      shortcut: "D",
+      active: currentPhase === "DEBRIEF",
+      action: () => switchPhase("DEBRIEF", "strategic-mirror"),
+    },
+    {
+      id: "burn-session",
+      label: "Burn Session",
+      desc: "Erase the local profile and start clean",
+      icon: <Shield className="w-4 h-4" />,
+      shortcut: "X",
+      active: false,
+      action: () => burnSession(),
     },
     {
       id: "toggle-wake",
