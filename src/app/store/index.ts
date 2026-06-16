@@ -21,6 +21,7 @@ const PERSISTED_KEYS = [
   "committedPosture",
   "callsign",
   "checkedItems",
+  "exploredIds",
   "plainTextMode",
   "isWoke",
   "isAudioMode",
@@ -49,6 +50,7 @@ export const useDossierStore = create<StoreState>()(
       ...createJourneySlice(set, get, api),
       ...createAssessmentSlice(set, get, api),
       ...createOperationsSlice(set, get, api),
+      lastSignal: null,
       // Derived cache initial values (recomputed on any signal mutation).
       ...deriveCache({
         responses: [],
@@ -56,6 +58,8 @@ export const useDossierStore = create<StoreState>()(
         simulatorReports: [],
         actsRead: [],
         committedPosture: null,
+        checkedItems: [],
+        exploredIds: [],
       }),
     }),
     {
@@ -84,6 +88,8 @@ export const useDossierStore = create<StoreState>()(
               simulatorReports: state.simulatorReports,
               actsRead: state.actsRead,
               committedPosture: state.committedPosture,
+              checkedItems: state.checkedItems,
+              exploredIds: state.exploredIds,
             }),
           );
         }

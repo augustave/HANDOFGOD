@@ -40,4 +40,15 @@ export type ProfileSignal =
       at: number;
     }
   | { kind: "simulator"; report: SimulatorReport }
-  | { kind: "reading"; actIndex: number; at: number };
+  | { kind: "reading"; actIndex: number; at: number }
+  | { kind: "passive"; weights: WeightVector };
+
+/** Transient record of the most recent profile mutation, drives the live toast. */
+export interface SignalEvent {
+  seq: number;
+  label: string;
+  weights: WeightVector;
+  /** True for posture commits and other affinity-only events with no dimension delta. */
+  affinityOnly?: boolean;
+  at: number;
+}

@@ -1,7 +1,11 @@
 import type { StateCreator } from "zustand";
 import type { AssessmentResponse } from "../../engine/signals";
+import { ACTS } from "../../data/dossier";
 import { deriveCache } from "../derive";
+import { makeSignal } from "../signal";
 import type { AssessmentSlice, StoreState } from "../types";
+
+const ACT_CODE_BY_ID = new Map(ACTS.map((a) => [a.id, a.code]));
 
 export const createAssessmentSlice: StateCreator<StoreState, [], [], AssessmentSlice> = (
   set,
@@ -30,10 +34,12 @@ export const createAssessmentSlice: StateCreator<StoreState, [], [], AssessmentS
       const deferredQuestionIds = state.deferredQuestionIds.filter(
         (id) => id !== question.id,
       );
+      const code = ACT_CODE_BY_ID.get(question.afterActId) ?? "ASSESSMENT";
       return {
         responses,
         deferredQuestionIds,
         ...deriveCache({ ...state, responses }),
+        lastSignal: makeSignal(`${code} // FIELD_ASSESSMENT`, option.weights),
       };
     }),
 

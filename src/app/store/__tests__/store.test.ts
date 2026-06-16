@@ -119,6 +119,37 @@ describe("dossier store", () => {
     for (const dim of DIMENSIONS) expect(state.profile[dim]).toBe(BASELINE);
   });
 
+  it("checklist items feed operationalThinking and emit a signal", () => {
+    const before = useDossierStore.getState().profile.operationalThinking;
+    useDossierStore.getState().toggleChecklistItem("audit-drift");
+    const state = useDossierStore.getState();
+    expect(state.checkedItems).toContain("audit-drift");
+    expect(state.profile.operationalThinking).toBeGreaterThan(before);
+    expect(state.lastSignal?.weights.operationalThinking).toBe(1);
+
+    // Unchecking removes the contribution.
+    useDossierStore.getState().toggleChecklistItem("audit-drift");
+    expect(useDossierStore.getState().profile.operationalThinking).toBe(before);
+  });
+
+  it("markExplored is idempotent and feeds the profile once", () => {
+    const before = useDossierStore.getState().profile.narrativeLiteracy;
+    useDossierStore.getState().markExplored("evidence", "1");
+    useDossierStore.getState().markExplored("evidence", "1");
+    const state = useDossierStore.getState();
+    expect(state.exploredIds).toEqual(["evidence:1"]);
+    expect(state.profile.narrativeLiteracy).toBeGreaterThan(before);
+  });
+
+  it("every scoring action sets lastSignal", () => {
+    expect(useDossierStore.getState().lastSignal).toBeNull();
+    useDossierStore.getState().answerQuestion(ASSESSMENT_QUESTIONS[0], ASSESSMENT_QUESTIONS[0].options[0].id);
+    expect(useDossierStore.getState().lastSignal).not.toBeNull();
+    const seq = useDossierStore.getState().lastSignal?.seq ?? 0;
+    useDossierStore.getState().chooseScenario(OPERATION_SCENARIOS[0], "A");
+    expect(useDossierStore.getState().lastSignal?.seq).toBeGreaterThan(seq);
+  });
+
   it("preference setters update and persist", () => {
     useDossierStore.getState().setRole("COMMANDER");
     useDossierStore.getState().setIsFullRead(true);

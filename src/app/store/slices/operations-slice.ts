@@ -1,6 +1,11 @@
 import type { StateCreator } from "zustand";
-import { SIMULATOR_REPORT_CAPS } from "../../engine/weights";
+import {
+  PASSIVE_CHECKLIST,
+  PASSIVE_EXPLORE,
+  SIMULATOR_REPORT_CAPS,
+} from "../../engine/weights";
 import { deriveCache } from "../derive";
+import { makeSignal } from "../signal";
 import type { OperationsSlice, ScenarioCommit, StoreState } from "../types";
 
 export const createOperationsSlice: StateCreator<StoreState, [], [], OperationsSlice> = (
@@ -11,6 +16,7 @@ export const createOperationsSlice: StateCreator<StoreState, [], [], OperationsS
   committedPosture: null,
   callsign: null,
   checkedItems: [],
+  exploredIds: [],
 
   chooseScenario: (scenario, choiceId) =>
     set((state) => {
@@ -19,11 +25,12 @@ export const createOperationsSlice: StateCreator<StoreState, [], [], OperationsS
       const isRecommit = state.scenarioCommits.some(
         (c) => c.scenarioId === scenario.id,
       );
+      const weights = isRecommit ? halveWeights(choice.weights) : choice.weights;
       const commit: ScenarioCommit = {
         scenarioId: scenario.id,
         choiceId: choice.id,
         // One RECONSIDER allowed at half weight (discourages outcome farming).
-        weights: isRecommit ? halveWeights(choice.weights) : choice.weights,
+        weights,
         postureAffinity: choice.postureAffinity,
         at: Date.now(),
       };
@@ -31,7 +38,12 @@ export const createOperationsSlice: StateCreator<StoreState, [], [], OperationsS
         ...state.scenarioCommits.filter((c) => c.scenarioId !== scenario.id),
         commit,
       ];
-      return { scenarioCommits, ...deriveCache({ ...state, scenarioCommits }) };
+      const code = scenario.code.split("//")[0].trim();
+      return {
+        scenarioCommits,
+        ...deriveCache({ ...state, scenarioCommits }),
+        lastSignal: makeSignal(`${code} // DECISION ${choice.id}`, weights),
+      };
     }),
 
   recordSimulatorReport: (report) =>
@@ -51,7 +63,11 @@ export const createOperationsSlice: StateCreator<StoreState, [], [], OperationsS
           { ...report, at: Date.now() },
         ];
       }
-      return { simulatorReports, ...deriveCache({ ...state, simulatorReports }) };
+      return {
+        simulatorReports,
+        ...deriveCache({ ...state, simulatorReports }),
+        lastSignal: makeSignal(`${report.simulatorId.toUpperCase()}_SIMULATOR`, report.weights),
+      };
     }),
 
   commitPosture: (posture, callsign) =>
@@ -59,14 +75,35 @@ export const createOperationsSlice: StateCreator<StoreState, [], [], OperationsS
       committedPosture: posture,
       callsign: callsign.trim() || null,
       ...deriveCache({ ...state, committedPosture: posture }),
+      lastSignal: makeSignal(`POSTURE_COMMITTED // ${posture.toUpperCase()}`, {}, true),
     })),
 
   toggleChecklistItem: (id) =>
-    set((state) => ({
-      checkedItems: state.checkedItems.includes(id)
-        ? state.checkedItems.filter((item) => item !== id)
-        : [...state.checkedItems, id],
-    })),
+    set((state) => {
+      const isChecking = !state.checkedItems.includes(id);
+      const checkedItems = isChecking
+        ? [...state.checkedItems, id]
+        : state.checkedItems.filter((item) => item !== id);
+      return {
+        checkedItems,
+        ...deriveCache({ ...state, checkedItems }),
+        lastSignal: isChecking
+          ? makeSignal("PROTOCOL // CHECKLIST_COMMITTED", PASSIVE_CHECKLIST)
+          : state.lastSignal,
+      };
+    }),
+
+  markExplored: (kind, id) =>
+    set((state) => {
+      const key = `${kind}:${id}`;
+      if (state.exploredIds.includes(key)) return {};
+      const exploredIds = [...state.exploredIds, key];
+      return {
+        exploredIds,
+        ...deriveCache({ ...state, exploredIds }),
+        lastSignal: makeSignal(`INTEL // ${kind.toUpperCase()}_OPENED`, PASSIVE_EXPLORE[kind] ?? {}),
+      };
+    }),
 });
 
 function halveWeights<T extends Readonly<Record<string, number | undefined>>>(

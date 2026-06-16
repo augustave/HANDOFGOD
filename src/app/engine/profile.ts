@@ -45,6 +45,9 @@ export function accumulateWeights(signals: readonly ProfileSignal[]): Record<Dim
       case "reading":
         addWeighted(totals, READING_BUMP, SOURCE_MULTIPLIER.reading);
         break;
+      case "passive":
+        addWeighted(totals, signal.weights, SOURCE_MULTIPLIER.passive);
+        break;
     }
   }
   return totals;

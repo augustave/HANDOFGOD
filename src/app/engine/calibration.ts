@@ -3,8 +3,11 @@
 // score range stays 0-100 no matter how copy/weights evolve.
 
 import {
+  CALIBRATION_FACTOR,
   DIMENSIONS,
   emptyWeightTotals,
+  PASSIVE_CHECKLIST,
+  PASSIVE_EXPLORE,
   READING_BUMP,
   SIMULATOR_REPORT_CAPS,
   SOURCE_MULTIPLIER,
@@ -19,6 +22,8 @@ import {
 } from "./simulator-weights";
 
 const TOTAL_ACTS = 8; // hero + 7 essay acts (reading signals use act indices 0-7)
+const CHECKLIST_ITEM_COUNT = 5;
+const EXPLORE_ITEM_COUNT = 5; // approx evidence + exhibit opens per dimension
 
 function maxAbsPerDimension(vectors: readonly WeightVector[]): Record<Dimension, number> {
   const maxes = emptyWeightTotals();
@@ -62,6 +67,21 @@ export function computeMaxContribution(
 
   for (const dim of DIMENSIONS) {
     totals[dim] += (READING_BUMP[dim] ?? 0) * TOTAL_ACTS * SOURCE_MULTIPLIER.reading;
+  }
+
+  // Passive interactions (checklist + evidence/exhibit opens).
+  for (const dim of DIMENSIONS) {
+    const checklist = (PASSIVE_CHECKLIST[dim] ?? 0) * CHECKLIST_ITEM_COUNT;
+    let explore = 0;
+    for (const vector of Object.values(PASSIVE_EXPLORE)) {
+      explore += (vector[dim] ?? 0) * EXPLORE_ITEM_COUNT;
+    }
+    totals[dim] += (checklist + explore) * SOURCE_MULTIPLIER.passive;
+  }
+
+  // Compress the denominator so deliberate choices move the radar visibly.
+  for (const dim of DIMENSIONS) {
+    totals[dim] *= CALIBRATION_FACTOR;
   }
 
   return totals;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Maximize2, Minimize2, FileText, ShieldAlert, Zap } from "lucide-react";
+import { useDossierStore } from "../store";
 import { cn } from "./dossier-components";
 
 interface ExhibitProps {
@@ -15,6 +16,13 @@ interface ExhibitProps {
 export const ExhibitCard = ({ id, title, source, threat, implication, metadata }: ExhibitProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"source" | "threat" | "implication">("source");
+  const markExplored = useDossierStore((s) => s.markExplored);
+
+  const toggle = () => {
+    const next = !isOpen;
+    setIsOpen(next);
+    if (next) markExplored("exhibit", id);
+  };
 
   const tabs = [
     { id: "source", label: "SOURCE", icon: FileText },
@@ -27,7 +35,7 @@ export const ExhibitCard = ({ id, title, source, threat, implication, metadata }
       <button
         type="button"
         className="flex items-center justify-between px-6 py-4 bg-ink-black text-white cursor-pointer group"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggle}
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-4">

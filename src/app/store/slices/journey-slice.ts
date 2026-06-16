@@ -1,7 +1,9 @@
 import type { StateCreator } from "zustand";
+import { READING_BUMP } from "../../engine/weights";
 import { ASSESSMENT_QUESTIONS } from "../../data/assessments";
 import { OPERATION_SCENARIOS } from "../../data/scenarios";
 import { deriveCache } from "../derive";
+import { makeSignal } from "../signal";
 import { createSessionId } from "../storage";
 import type { JourneyPhase, JourneySlice, StoreState } from "../types";
 
@@ -53,7 +55,11 @@ export const createJourneySlice: StateCreator<StoreState, [], [], JourneySlice> 
     set((state) => {
       if (state.actsRead.includes(idx)) return {};
       const actsRead = [...state.actsRead, idx];
-      return { actsRead, ...deriveCache({ ...state, actsRead }) };
+      return {
+        actsRead,
+        ...deriveCache({ ...state, actsRead }),
+        lastSignal: makeSignal("READING // SECTION_LOGGED", READING_BUMP),
+      };
     }),
 
   markAllActsRead: () =>
@@ -85,6 +91,8 @@ export const createJourneySlice: StateCreator<StoreState, [], [], JourneySlice> 
       committedPosture: null,
       callsign: null,
       checkedItems: [],
+      exploredIds: [],
+      lastSignal: null,
       ...deriveCache({
         ...state,
         responses: [],
@@ -92,6 +100,8 @@ export const createJourneySlice: StateCreator<StoreState, [], [], JourneySlice> 
         simulatorReports: [],
         actsRead: [],
         committedPosture: null,
+        checkedItems: [],
+        exploredIds: [],
       }),
     })),
 });

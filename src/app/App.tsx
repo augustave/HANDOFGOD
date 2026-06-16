@@ -19,6 +19,7 @@ import { StrategicMirror } from "./components/strategic-mirror";
 import { HeroSection } from "./components/hero-section";
 import { isProfileDebugEnabled, ProfileDebug } from "./components/profile-debug";
 import { SelectionTooltip } from "./components/selection-tooltip";
+import { SignalToast } from "./components/signal-toast";
 import { StarRailNav } from "./components/star-rail-nav";
 import { SystemCard } from "./components/system-card";
 
@@ -88,6 +89,8 @@ export default function App() {
       </Suspense>
 
       {isProfileDebugEnabled() && <ProfileDebug />}
+
+      <SignalToast />
 
       <AnimatePresence>
         {wakeFlash && !showBoot && (

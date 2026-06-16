@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { ChevronRight, Lock, RotateCcw } from "lucide-react";
 import { questionsForAct } from "../data/assessments";
 import type { AssessmentQuestion } from "../engine/content-types";
+import { DIMENSION_LABELS } from "../engine/weights";
 import { useDossierStore } from "../store";
 import { cn, Stamp } from "./dossier-components";
 
@@ -53,12 +54,17 @@ function QuestionBlock({ question }: { question: AssessmentQuestion }) {
   const isDeferred = useDossierStore((s) => s.deferredQuestionIds.includes(question.id));
   const answerQuestion = useDossierStore((s) => s.answerQuestion);
   const deferQuestion = useDossierStore((s) => s.deferQuestion);
+  const categoryScore = useDossierStore((s) => s.profile[question.category]);
   const [selected, setSelected] = useState<string | null>(null);
   const [resumed, setResumed] = useState(false);
+  // Exposure on the question's primary dimension, captured just before commit.
+  const [exposureBefore, setExposureBefore] = useState<number | null>(null);
 
   const answeredOption = response
     ? question.options.find((o) => o.id === response.answer)
     : undefined;
+  const exposureAfter = 100 - categoryScore;
+  const categoryLabel = DIMENSION_LABELS[question.category];
 
   if (isDeferred && !resumed) {
     return (
@@ -134,7 +140,9 @@ function QuestionBlock({ question }: { question: AssessmentQuestion }) {
               type="button"
               disabled={selected === null}
               onClick={() => {
-                if (selected !== null) answerQuestion(question, selected);
+                if (selected === null) return;
+                setExposureBefore(100 - categoryScore);
+                answerQuestion(question, selected);
               }}
               className="flex items-center gap-2 bg-ink-black text-white font-mono text-[10px] font-black uppercase tracking-[0.3em] px-5 py-3 cursor-pointer hover:bg-stamp-red transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
@@ -165,6 +173,16 @@ function QuestionBlock({ question }: { question: AssessmentQuestion }) {
             <h4 className="font-mono text-[9px] font-black uppercase tracking-[0.3em] text-stamp-red mb-3">
               RESPONSE_ANALYSIS
             </h4>
+            {exposureBefore !== null && exposureBefore !== exposureAfter && (
+              <div className="mb-4 inline-flex items-center gap-3 border border-ink-black/15 bg-substrate-paper px-3 py-2 font-mono text-[10px] font-black uppercase tracking-widest">
+                <span className="text-ink-black/50">{categoryLabel} EXPOSURE</span>
+                <span className="text-ink-black/40 line-through">{exposureBefore}</span>
+                <span className="text-ink-black/30">→</span>
+                <span className={exposureAfter < exposureBefore ? "text-green-700" : "text-stamp-red"}>
+                  {exposureAfter}
+                </span>
+              </div>
+            )}
             <p className="font-serif text-base md:text-lg leading-relaxed text-ink-black/80 italic">
               {answeredOption.insight}
             </p>

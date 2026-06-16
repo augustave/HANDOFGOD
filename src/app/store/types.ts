@@ -2,6 +2,7 @@ import type { Posture, Profile, PostureDistribution } from "../engine/weights";
 import type {
   AssessmentResponse,
   ScenarioChoiceId,
+  SignalEvent,
   SimulatorReport,
 } from "../engine/signals";
 import type { AssessmentQuestion, OperationScenario } from "../engine/content-types";
@@ -46,10 +47,13 @@ export interface OperationsSlice {
   callsign: string | null;
   /** Checklist item ids checked (interface-checklist persistence). */
   checkedItems: readonly string[];
+  /** "kind:id" of opened evidence/exhibit/node — append-only, feeds passive signals. */
+  exploredIds: readonly string[];
   chooseScenario(scenario: OperationScenario, choiceId: ScenarioChoiceId): void;
   recordSimulatorReport(report: Omit<SimulatorReport, "at">): void;
   commitPosture(posture: Posture, callsign: string): void;
   toggleChecklistItem(id: string): void;
+  markExplored(kind: "evidence" | "exhibit" | "node", id: string): void;
 }
 
 export interface PreferencesSlice {
@@ -78,4 +82,7 @@ export type StoreState = JourneySlice &
   AssessmentSlice &
   OperationsSlice &
   PreferencesSlice &
-  DerivedCache;
+  DerivedCache & {
+    /** Most recent profile mutation; drives the live signal toast. Transient. */
+    lastSignal: SignalEvent | null;
+  };

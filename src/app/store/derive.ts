@@ -7,7 +7,7 @@ import { computeProfile } from "../engine/profile";
 import { computePostureDistribution } from "../engine/posture";
 import { computeUnlocks } from "../engine/unlocks";
 import type { ProfileSignal } from "../engine/signals";
-import type { Posture } from "../engine/weights";
+import { PASSIVE_CHECKLIST, PASSIVE_EXPLORE, type Posture } from "../engine/weights";
 import { ASSESSMENT_QUESTIONS } from "../data/assessments";
 import { OPERATION_SCENARIOS } from "../data/scenarios";
 import { UNLOCK_GATES } from "../data/unlock-gates";
@@ -25,7 +25,13 @@ const QUESTION_ACT_BY_ID = new Map<string, string>(
 
 type SignalSource = Pick<
   StoreState,
-  "responses" | "scenarioCommits" | "simulatorReports" | "actsRead" | "committedPosture"
+  | "responses"
+  | "scenarioCommits"
+  | "simulatorReports"
+  | "actsRead"
+  | "committedPosture"
+  | "checkedItems"
+  | "exploredIds"
 >;
 
 export function collectSignals(state: SignalSource): ProfileSignal[] {
@@ -48,6 +54,15 @@ export function collectSignals(state: SignalSource): ProfileSignal[] {
   }
   for (const actIndex of state.actsRead) {
     signals.push({ kind: "reading", actIndex, at: 0 });
+  }
+  // Passive interactions: every checked protocol + opened intel item scores.
+  for (let i = 0; i < state.checkedItems.length; i++) {
+    signals.push({ kind: "passive", weights: PASSIVE_CHECKLIST });
+  }
+  for (const explored of state.exploredIds) {
+    const kind = explored.split(":")[0];
+    const weights = PASSIVE_EXPLORE[kind];
+    if (weights) signals.push({ kind: "passive", weights });
   }
   return signals;
 }

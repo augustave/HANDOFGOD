@@ -29,7 +29,7 @@ export type PostureAffinity = Readonly<Partial<Record<Posture, number>>>;
 /** Integer percentages, always summing to exactly 100. */
 export type PostureDistribution = Readonly<Record<Posture, number>>;
 
-export type SignalKind = "assessment" | "scenario" | "simulator" | "reading";
+export type SignalKind = "assessment" | "scenario" | "simulator" | "reading" | "passive";
 
 /** Relative influence of each signal source on dimension scores. */
 export const SOURCE_MULTIPLIER: Readonly<Record<SignalKind, number>> = {
@@ -37,10 +37,27 @@ export const SOURCE_MULTIPLIER: Readonly<Record<SignalKind, number>> = {
   scenario: 1.5,
   simulator: 0.5,
   reading: 1.0,
+  passive: 0.5,
 };
 
 /** Neutral starting score for every dimension. */
 export const BASELINE = 50;
+
+/**
+ * Scores normalize against the content bank's theoretical max times this
+ * factor — well below 1 so a handful of deliberate choices visibly move the
+ * radar instead of crawling. The clamp keeps everything in 0-100.
+ */
+export const CALIBRATION_FACTOR = 0.4;
+
+/** Passive interaction weights (checklist items, evidence/exhibit opens). */
+export const PASSIVE_CHECKLIST: WeightVector = { operationalThinking: 1 };
+
+export const PASSIVE_EXPLORE: Readonly<Record<string, WeightVector>> = {
+  evidence: { narrativeLiteracy: 1 },
+  exhibit: { systemAwareness: 1 },
+  node: { systemAwareness: 1 },
+};
 
 /** Flat posture points granted by an explicit PostureTerminal commitment. */
 export const POSTURE_COMMIT_BONUS = 30;

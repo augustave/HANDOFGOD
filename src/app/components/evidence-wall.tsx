@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Info, Link as LinkIcon, X } from "lucide-react";
+import { useDossierStore } from "../store";
 import { cn } from "./dossier-components";
 
 interface EvidenceItem {
@@ -23,6 +24,12 @@ const evidence: EvidenceItem[] = [
 
 export function EvidenceWall() {
   const [selected, setSelected] = useState<EvidenceItem | null>(null);
+  const markExplored = useDossierStore((s) => s.markExplored);
+
+  const open = (item: EvidenceItem) => {
+    setSelected(item);
+    markExplored("evidence", item.id);
+  };
 
   useEffect(() => {
     if (!selected) return undefined;
@@ -62,7 +69,7 @@ export function EvidenceWall() {
             width: item.type === "photo" ? "180px" : "200px"
           }}
           whileHover={{ scale: 1.05, rotate: 0 }}
-          onClick={() => setSelected(item)}
+          onClick={() => open(item)}
         >
           {item.type === "photo" ? (
             <div className="aspect-square bg-gray-200 mb-2 overflow-hidden flex items-center justify-center relative">
