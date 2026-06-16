@@ -4,11 +4,17 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { ChevronDown, ChevronUp, Lock } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, Circle, Lock } from "lucide-react";
 import { declassifiedForAct, type DeclassifiedExtra } from "../data/declassified";
+import { UNLOCK_GATES } from "../data/unlock-gates";
+import type { UnlockGate } from "../engine/unlocks";
+import { gateRequirementLines } from "../lib/requirements";
 import { useDossierStore } from "../store";
+import { assessedActIds } from "../store/derive";
 import { selectIsUnlocked } from "../store/selectors";
 import { cn, Stamp } from "./dossier-components";
+
+const GATE_BY_ID = new Map<string, UnlockGate>(UNLOCK_GATES.map((g) => [g.id, g]));
 
 export function ActDeclassified({ actId }: { actId: string }) {
   const extras = declassifiedForAct(actId);
@@ -24,21 +30,50 @@ export function ActDeclassified({ actId }: { actId: string }) {
 
 function DeclassifiedBlock({ extra }: { extra: DeclassifiedExtra }) {
   const unlocked = useDossierStore(selectIsUnlocked(extra.gateId));
+  const actsReadCount = useDossierStore((s) => s.actsRead.length);
+  const responsesCount = useDossierStore((s) => s.responses.length);
+  const scenariosCount = useDossierStore((s) => s.scenarioCommits.length);
+  const responses = useDossierStore((s) => s.responses);
   const [expanded, setExpanded] = useState(false);
   const hostile = extra.kind === "redteam" || extra.kind === "counterargument";
 
   if (!unlocked) {
+    const gate = GATE_BY_ID.get(extra.gateId);
+    const lines = gate
+      ? gateRequirementLines(gate.requires, {
+          actsReadCount,
+          responsesCount,
+          scenariosCount,
+          assessedActIds: assessedActIds({ responses }),
+        })
+      : [];
     return (
       <div
         data-testid={`declassified-${extra.gateId}`}
-        className="border-2 border-dashed border-ink-black/25 bg-tape-beige/30 p-4 flex items-center gap-4"
+        className="border-2 border-dashed border-ink-black/25 bg-tape-beige/30 p-4 flex gap-4"
       >
-        <Lock className="w-4 h-4 shrink-0 text-ink-black/40" />
-        <div className="flex-1 min-w-0">
-          <div className="h-3 bg-redaction-black/80 max-w-[60%] mb-2" aria-hidden="true" />
+        <Lock className="w-4 h-4 shrink-0 text-ink-black/40 mt-0.5" />
+        <div className="flex-1 min-w-0 space-y-2">
           <div className="font-mono text-[9px] font-black uppercase tracking-widest text-ink-black/50">
-            LOCKED // {extra.requirementText}
+            LOCKED // {extra.title}
           </div>
+          <ul className="space-y-1">
+            {lines.map((line) => (
+              <li
+                key={line.label}
+                className={cn(
+                  "flex items-center gap-2 font-mono text-[9px] font-black uppercase tracking-widest",
+                  line.met ? "text-green-700" : "text-ink-black/50",
+                )}
+              >
+                {line.met ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3 opacity-40" />}
+                {line.label}
+                <span className="opacity-60">
+                  ({Math.min(line.have, line.need)}/{line.need})
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     );

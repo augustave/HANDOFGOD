@@ -10,6 +10,13 @@ import type { OperationScenario, ScenarioChoice } from "../engine/content-types"
 import type { ScenarioChoiceId } from "../engine/signals";
 import { useDossierStore } from "../store";
 import { cn, Stamp } from "./dossier-components";
+import type { SecurityRole } from "../types";
+
+const ROLE_SCENARIO_FRAME: Record<SecurityRole, string> = {
+  ANALYST: "ANALYST FRAME // What is actually happening here?",
+  OPERATOR: "OPERATOR FRAME // What would you do?",
+  COMMANDER: "COMMANDER FRAME // What are the second-order effects?",
+};
 
 export function ActScenarios({ actId }: { actId: string }) {
   const scenarios = scenariosForAct(actId);
@@ -28,6 +35,7 @@ export function ScenarioPlayer({ scenario }: { scenario: OperationScenario }) {
     s.scenarioCommits.find((c) => c.scenarioId === scenario.id),
   );
   const chooseScenario = useDossierStore((s) => s.chooseScenario);
+  const role = useDossierStore((s) => s.role);
   const [selected, setSelected] = useState<ScenarioChoiceId | null>(null);
   const [reconsidering, setReconsidering] = useState(false);
   const [hasReconsidered, setHasReconsidered] = useState(false);
@@ -62,6 +70,9 @@ export function ScenarioPlayer({ scenario }: { scenario: OperationScenario }) {
           </p>
           <p className="font-mono text-[10px] font-black uppercase tracking-widest text-ink-black/50 border-l-2 border-stamp-red pl-3">
             {scenario.constraint}
+          </p>
+          <p className="font-mono text-[10px] font-black uppercase tracking-widest text-dossier-blue border-l-2 border-dossier-blue pl-3">
+            {ROLE_SCENARIO_FRAME[role]}
           </p>
         </div>
 
