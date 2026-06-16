@@ -63,12 +63,15 @@ export interface PreferencesSlice {
   isFocusMode: boolean;
   isFullRead: boolean;
   role: SecurityRole;
+  /** Transient: the strategic-terrain map overlay (persistent nav layer). */
+  isTerrainOpen: boolean;
   setPlainTextMode(v: boolean): void;
   setIsWoke(v: boolean): void;
   setIsAudioMode(v: boolean): void;
   setIsFocusMode(v: boolean): void;
   setIsFullRead(v: boolean): void;
   setRole(role: SecurityRole): void;
+  setIsTerrainOpen(v: boolean): void;
 }
 
 /** Recomputed from raw signals after every mutation + on rehydrate. Never persisted. */

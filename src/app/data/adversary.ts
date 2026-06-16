@@ -4,6 +4,10 @@
 
 export interface AdversaryBrief {
   actId: string;
+  /** One-line normal-view framing (how the system holds). */
+  defends: string;
+  /** One-line adversary-view framing (how the system fails). */
+  fractures: string;
   objective: string;
   vectors: readonly [string, string, string];
   counter: string;
@@ -12,6 +16,8 @@ export interface AdversaryBrief {
 export const ADVERSARY_BRIEFS: readonly AdversaryBrief[] = [
   {
     actId: "myth_of_morality",
+    defends: "How myths unify — compressing grief into shared agency.",
+    fractures: "How myths fracture — the same story turned into a wedge that expels the capable.",
     objective: "Weaponize the belonging protocol: make the loyalty test serve you.",
     vectors: [
       "Author the myth first — whoever frames the wound controls what counts as revenge.",
@@ -23,6 +29,8 @@ export const ADVERSARY_BRIEFS: readonly AdversaryBrief[] = [
   },
   {
     actId: "authentic_narrative",
+    defends: "How capability, owned and governed, becomes trustworthy power.",
+    fractures: "How performative caution disarms a builder while calling it virtue.",
     objective: "Lock the builders into permanent performative caution.",
     vectors: [
       "Reward every public apology for capability with status; punish every plain statement of strength.",
@@ -34,6 +42,8 @@ export const ADVERSARY_BRIEFS: readonly AdversaryBrief[] = [
   },
   {
     actId: "two_front",
+    defends: "How a society defends both the technical and the narrative front.",
+    fractures: "How a culture is convinced to sabotage its own advantage.",
     objective: "Win the war the firewall can't see.",
     vectors: [
       "Time narrative spikes to capability releases — make every domestic win feel like a scandal.",
@@ -45,6 +55,8 @@ export const ADVERSARY_BRIEFS: readonly AdversaryBrief[] = [
   },
   {
     actId: "sovereign",
+    defends: "How dual-use infrastructure, threat-modeled, holds its ground.",
+    fractures: "How an unmapped dependency becomes someone else's decision.",
     objective: "Hold the chokepoints; let them keep believing in 'civilian tech.'",
     vectors: [
       "Encourage the civilian/military fiction — every unexamined dependency is a lever you own.",
@@ -56,6 +68,8 @@ export const ADVERSARY_BRIEFS: readonly AdversaryBrief[] = [
   },
   {
     actId: "operational_interfaces",
+    defends: "How interfaces and protocols let the Valley and DC move as one.",
+    fractures: "How non-coordination becomes the adversary's free asset.",
     objective: "Keep the Valley and DC unable to coordinate.",
     vectors: [
       "Feed the capture narrative: every interface between tech and state reads as corruption.",
@@ -67,6 +81,8 @@ export const ADVERSARY_BRIEFS: readonly AdversaryBrief[] = [
   },
   {
     actId: "education",
+    defends: "How literacy turns designers into stewards of what they build.",
+    fractures: "How the 'not my job' script keeps builders blind in their own domain.",
     objective: "Keep the builders illiterate in the domain they already operate in.",
     vectors: [
       "Maintain the script: security literacy is someone else's job, somewhere in a government building.",
@@ -78,6 +94,8 @@ export const ADVERSARY_BRIEFS: readonly AdversaryBrief[] = [
   },
   {
     actId: "final",
+    defends: "How capability, ethics, and institutions break the trance together.",
+    fractures: "How a permanent myth-mode keeps the trance alive as rage without steering.",
     objective: "Make sure the trance never breaks.",
     vectors: [
       "Keep them preparing for fair duels while you show up early.",

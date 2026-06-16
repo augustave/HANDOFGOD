@@ -41,6 +41,20 @@ export function AdversarialLens({ actId }: { actId: string }) {
             className="overflow-hidden"
           >
             <div className="mt-3 bg-ink-black text-white border-l-4 border-stamp-red p-6 md:p-8 space-y-5">
+              <div className="grid sm:grid-cols-2 gap-3 pb-4 border-b border-white/10">
+                <div className="space-y-1">
+                  <div className="font-mono text-[8px] font-black uppercase tracking-[0.3em] text-white/40">
+                    NORMAL_VIEW
+                  </div>
+                  <div className="font-serif text-sm leading-snug text-white/70">{brief.defends}</div>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-mono text-[8px] font-black uppercase tracking-[0.3em] text-stamp-red">
+                    ADVERSARY_VIEW
+                  </div>
+                  <div className="font-serif text-sm leading-snug text-white/90">{brief.fractures}</div>
+                </div>
+              </div>
               <div className="font-mono text-[9px] font-black uppercase tracking-[0.3em] text-stamp-red">
                 ADVERSARY_BRIEF // OBJECTIVE
               </div>

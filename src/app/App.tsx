@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { Lock, Search } from "lucide-react";
 import { ACTS, SYSTEM_CARD_STATES } from "./data/dossier";
 import { hasPersistedSession, useDossierStore } from "./store";
+import { selectClearance } from "./store/selectors";
+import { phaseForActId } from "./data/journey-phases";
 import { useAudioBriefing } from "./hooks/use-audio-briefing";
 import { useDossierProgress } from "./hooks/use-dossier-progress";
 import { useReducedMotion } from "./hooks/use-reduced-motion";
@@ -20,6 +22,7 @@ import { HeroSection } from "./components/hero-section";
 import { isProfileDebugEnabled, ProfileDebug } from "./components/profile-debug";
 import { SelectionTooltip } from "./components/selection-tooltip";
 import { SignalToast } from "./components/signal-toast";
+import { TerrainOverlay } from "./components/terrain-overlay";
 import { StarRailNav } from "./components/star-rail-nav";
 import { SystemCard } from "./components/system-card";
 
@@ -40,6 +43,7 @@ export default function App() {
   const setIsFullRead = useDossierStore((s) => s.setIsFullRead);
   const role = useDossierStore((s) => s.role);
   const phase = useDossierStore((s) => s.phase);
+  const clearance = useDossierStore(selectClearance);
   const [shareText, setShareText] = useState("");
   const [isShareOpen, setIsShareOpen] = useState(false);
   // Boot splash only on first-ever visits; returning sessions skip straight in.
@@ -91,6 +95,7 @@ export default function App() {
       {isProfileDebugEnabled() && <ProfileDebug />}
 
       <SignalToast />
+      <TerrainOverlay />
 
       <AnimatePresence>
         {wakeFlash && !showBoot && (
@@ -179,9 +184,9 @@ export default function App() {
             )}
           >
             <span className="flex items-center gap-1.5">
-              <Lock className="w-3 h-3" /> SECURE_CORE
+              <Lock className="w-3 h-3" /> CLEARANCE: {clearance}
             </span>
-            <span>20.01.2026</span>
+            <span>PHASE: {phase}</span>
           </div>
         </div>
         <button
@@ -218,7 +223,7 @@ export default function App() {
                 <TornEdge />
                 <div className="max-w-4xl mx-auto space-y-12">
                   <div className="font-mono text-[11px] text-stamp-red font-black uppercase tracking-[0.3em] md:tracking-[0.4em] mb-6 flex items-center gap-3">
-                    <span className="w-3 h-px bg-stamp-red" /> {act.code} // {act.title}
+                    <span className="w-3 h-px bg-stamp-red" /> PHASE {actIndex} // {phaseForActId(act.id)?.name ?? act.code}
                   </div>
                   <h2 className="text-[clamp(3rem,12vw,6rem)] md:text-8xl font-black mb-16 tracking-normal uppercase leading-[0.85] text-ink-black">
                     <SecureLine text={act.title.split(" ").slice(0, -1).join(" ") + " "} className="inline-block mr-4" />

@@ -108,12 +108,12 @@ export function CommandPalette({
     },
     {
       id: "view-terrain",
-      label: "View Strategic Terrain",
-      desc: "Jump to the knowledge graph",
+      label: "Open Strategic Terrain",
+      desc: "Open the knowledge-graph navigator",
       icon: <Monitor className="w-4 h-4" />,
       shortcut: "M",
       active: false,
-      action: () => document.getElementById("terrain-map")?.scrollIntoView({ behavior: "smooth" }),
+      action: () => useDossierStore.getState().setIsTerrainOpen(true),
     },
     {
       id: "burn-session",

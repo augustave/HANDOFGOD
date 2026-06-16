@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Eye, EyeOff, Volume2, VolumeX, Lock, Unlock, FileText, ScrollText, Share2, Download, X, Menu } from "lucide-react";
+import { Eye, EyeOff, Volume2, VolumeX, Lock, Unlock, FileText, ScrollText, Map as MapIcon, Share2, Download, X, Menu } from "lucide-react";
 import { cn } from "./dossier-components";
 import { JourneyTracker } from "./journey-tracker";
 import { useDossierStore } from "../store";
@@ -31,6 +31,7 @@ export const CommandDock = ({ onShare }: CommandDockProps) => {
   const role = useDossierStore((s) => s.role);
   const setRole = useDossierStore((s) => s.setRole);
   const phase = useDossierStore((s) => s.phase);
+  const setIsTerrainOpen = useDossierStore((s) => s.setIsTerrainOpen);
   const [mobileExpanded, setMobileExpanded] = useState(false);
 
   return createPortal(
@@ -98,6 +99,15 @@ export const CommandDock = ({ onShare }: CommandDockProps) => {
             aria-pressed={isFullRead}
           >
             <ScrollText className={cn("w-4 h-4", isFullRead && "text-star-gold")} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsTerrainOpen(true)}
+            className="p-2 text-gray-500 hover:text-white transition-colors cursor-pointer"
+            title="Open Strategic Terrain"
+            aria-label="Open strategic terrain map"
+          >
+            <MapIcon className="w-4 h-4" />
           </button>
           <button
             type="button"
@@ -222,6 +232,17 @@ export const CommandDock = ({ onShare }: CommandDockProps) => {
                   >
                     <ScrollText className="w-3.5 h-3.5" />
                     READ ALL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsTerrainOpen(true);
+                      setMobileExpanded(false);
+                    }}
+                    className="flex items-center gap-2 p-3 font-mono text-[9px] font-black uppercase tracking-widest transition-colors cursor-pointer border text-gray-500 border-white/10"
+                  >
+                    <MapIcon className="w-3.5 h-3.5" />
+                    TERRAIN
                   </button>
                   <button
                     type="button"

@@ -10,10 +10,12 @@ export const createPreferencesSlice: StateCreator<StoreState, [], [], Preference
   isFocusMode: false,
   isFullRead: false,
   role: "ANALYST",
+  isTerrainOpen: false,
   setPlainTextMode: (v) => set({ plainTextMode: v }),
   setIsWoke: (v) => set({ isWoke: v }),
   setIsAudioMode: (v) => set({ isAudioMode: v }),
   setIsFocusMode: (v) => set({ isFocusMode: v }),
   setIsFullRead: (v) => set({ isFullRead: v }),
   setRole: (role) => set({ role }),
+  setIsTerrainOpen: (v) => set({ isTerrainOpen: v }),
 });
