@@ -5,8 +5,14 @@
 
 import { CheckCircle2, Circle, Download, FileText, Lock, Printer } from "lucide-react";
 import { BRIEF_SUMMARIES } from "../data/dossier";
-import { CONFIDENCE_THRESHOLD, DIMENSION_DEBRIEFS, TOTAL_SIGNALS } from "../data/debrief";
+import {
+  CONFIDENCE_THRESHOLD,
+  DIMENSION_DEBRIEFS,
+  POSTURE_DEBRIEFS,
+  TOTAL_SIGNALS,
+} from "../data/debrief";
 import { compositeScore, rankDimensions } from "../engine/profile";
+import { dominantPosture } from "../engine/posture";
 import {
   DIMENSION_LABELS,
   DIMENSIONS,
@@ -108,6 +114,8 @@ function UnlockedMirror() {
   const strengths = ranked.slice(0, 2);
   const blindSpots = ranked.slice(-2);
   const composite = compositeScore(profile);
+  const dominant = dominantPosture(posture);
+  const postureDebrief = POSTURE_DEBRIEFS[dominant];
   const openActions = CHECKLIST_ITEMS.filter((i) => !checkedItems.includes(i.id)).map((i) => i.text);
   const lowConfidence = signalCount < CONFIDENCE_THRESHOLD;
 
@@ -159,6 +167,22 @@ function UnlockedMirror() {
       )}
 
       <div className="p-6 md:p-10 space-y-12">
+        {/* Dominant traits — the headline read */}
+        <div className="border-l-4 border-star-gold pl-6 space-y-3" data-testid="dominant-traits">
+          <h3 className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-stamp-red">
+            DOMINANT_POSTURE
+          </h3>
+          <div className="text-3xl md:text-4xl font-black uppercase tracking-tight text-ink-black">
+            {postureDebrief.archetype}
+          </div>
+          <p className="font-serif text-lg leading-relaxed text-ink-black/80 italic max-w-2xl">
+            {postureDebrief.dominantTrait}
+          </p>
+          <div className="font-mono text-[9px] font-black uppercase tracking-widest text-ink-black/40">
+            DEFINING_STRENGTHS: {strengths.map((d) => DIMENSION_LABELS[d]).join(" · ")}
+          </div>
+        </div>
+
         {/* Posture distribution */}
         <div className="space-y-4">
           <h3 className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-stamp-red">
@@ -295,6 +319,17 @@ function UnlockedMirror() {
               </ul>
             </div>
           )}
+        </div>
+
+        {/* Suggested next doctrine — generated from dominant posture + weakest axis */}
+        <div className="bg-ink-black text-white p-6 md:p-8 border-l-4 border-star-gold space-y-3" data-testid="next-doctrine">
+          <h3 className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-star-gold">
+            SUGGESTED_NEXT_DOCTRINE
+          </h3>
+          <p className="font-serif text-lg leading-relaxed text-white/90">{postureDebrief.nextDoctrine}</p>
+          <p className="font-serif text-base leading-relaxed text-white/60 italic">
+            Your weakest axis is {DIMENSION_LABELS[blindSpots[blindSpots.length - 1]]}. {DIMENSION_DEBRIEFS[blindSpots[blindSpots.length - 1]].blindSpot}
+          </p>
         </div>
 
         {/* Evidence trail */}

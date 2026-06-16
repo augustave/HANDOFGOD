@@ -1,7 +1,38 @@
 // DEBRIEF copy: per-dimension strength/blind-spot readings and the
 // recommended-study map that drives the AFTER_ACTION_REPORT reading list.
 
-import type { Dimension } from "../engine/weights";
+import type { Dimension, Posture } from "../engine/weights";
+
+export interface PostureDebrief {
+  archetype: string;
+  dominantTrait: string;
+  /** The doctrine this posture should study next to round out its game. */
+  nextDoctrine: string;
+}
+
+export const POSTURE_DEBRIEFS: Readonly<Record<Posture, PostureDebrief>> = {
+  watcher: {
+    archetype: "THE WATCHER",
+    dominantTrait:
+      "You read the field before you move — pattern recognition over reflex, attribution discipline over outrage. You see the operation others experience as weather.",
+    nextDoctrine:
+      "Next doctrine: conversion. Watching without building cedes the terrain you've mapped. Study how analysis becomes capability before the window closes.",
+  },
+  architect: {
+    archetype: "THE ARCHITECT",
+    dominantTrait:
+      "You think in systems and interfaces — chokepoints, dependencies, the protocols that survive contact with an incident. You build the structures others only diagram.",
+    nextDoctrine:
+      "Next doctrine: narrative. Systems that can't defend their own story get dismantled by people who can. Study information operations as a first-class threat surface.",
+  },
+  sovereign: {
+    archetype: "THE SOVEREIGN",
+    dominantTrait:
+      "You hold capability without apology and choose openness from strength. You name the sword you're carrying — and decide, deliberately, when it stays sheathed.",
+    nextDoctrine:
+      "Next doctrine: legitimacy. Power without institutions becomes myth-mode — rage that can spark but cannot govern. Study how coordination and accountability compound capability.",
+  },
+};
 
 export interface DimensionDebrief {
   strength: string;
