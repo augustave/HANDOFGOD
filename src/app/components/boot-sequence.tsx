@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Terminal, ChevronRight, Wifi, ShieldCheck, Activity, Fingerprint, Zap } from "lucide-react";
+import { Terminal, ChevronRight, Activity, Zap } from "lucide-react";
 
 const BOOT_MESSAGES: { text: string; type: "normal" | "success" | "warning" | "glitch"; delay: number }[] = [
   { text: "Establishing secure link...", type: "normal", delay: 250 },
@@ -128,8 +128,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
               <h1 className="text-xl md:text-2xl font-black uppercase tracking-widest">DOSSIER_KERNEL_3.1</h1>
             </div>
             <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold opacity-50 uppercase tracking-[0.2em]">
-              <ShieldCheck className="w-3 h-3" /> Secure_Session_Active
-              <Wifi className="w-3 h-3 ml-2" /> Encrypted_Stream
+              LOCAL_ONLY // NO_TELEMETRY
             </div>
           </div>
           <div className="text-right hidden md:block">
@@ -193,21 +192,6 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
 
         {/* Bottom section */}
         <div className="space-y-4 mt-auto">
-          {/* Auth fingerprint */}
-          <AnimatePresence>
-            {phase === "auth" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-star-gold/60"
-              >
-                <Fingerprint className="w-5 h-5 animate-pulse" />
-                <span>Biometric verification in progress...</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Progress bar */}
           <div className="w-full h-1.5 bg-white/5 relative overflow-hidden border border-white/5">
             <motion.div

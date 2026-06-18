@@ -2,7 +2,7 @@
 // useDossierStore(selectX) — derived values live in the store cache,
 // so these are cheap field reads, not recomputations.
 
-import { DIMENSIONS, type Dimension } from "../engine/weights";
+import { DIMENSIONS, type Dimension, type Profile } from "../engine/weights";
 import { assessedActIds } from "./derive";
 import type { StoreState } from "./types";
 
@@ -20,8 +20,13 @@ const RADAR_AXIS_DIMENSIONS: readonly Dimension[] = [
   "operationalThinking",
 ];
 
+/** Exposure values (100 - literacy) in radar-axis order; usable with a bare Profile. */
+export function radarValuesFromProfile(profile: Profile): number[] {
+  return RADAR_AXIS_DIMENSIONS.map((dim) => 100 - profile[dim]);
+}
+
 export function selectRadarValues(state: StoreState): number[] {
-  return RADAR_AXIS_DIMENSIONS.map((dim) => 100 - state.profile[dim]);
+  return radarValuesFromProfile(state.profile);
 }
 
 export function selectProfile(state: StoreState) {

@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Eye, EyeOff, Volume2, VolumeX, Lock, Unlock, FileText, ScrollText, Map as MapIcon, Share2, Download, X, Menu } from "lucide-react";
 import { cn } from "./dossier-components";
 import { JourneyTracker } from "./journey-tracker";
+import { JourneyPhaseProgress } from "./journey-phase-progress";
+import { ThreatRadar } from "./threat-radar";
 import { useDossierStore } from "../store";
+import { radarValuesFromProfile } from "../store/selectors";
 import type { SecurityRole } from "../types";
 
 interface CommandDockProps {
@@ -32,6 +35,8 @@ export const CommandDock = ({ onShare }: CommandDockProps) => {
   const setRole = useDossierStore((s) => s.setRole);
   const phase = useDossierStore((s) => s.phase);
   const setIsTerrainOpen = useDossierStore((s) => s.setIsTerrainOpen);
+  const profile = useDossierStore((s) => s.profile);
+  const radarValues = useMemo(() => radarValuesFromProfile(profile), [profile]);
   const [mobileExpanded, setMobileExpanded] = useState(false);
 
   return createPortal(
@@ -177,10 +182,17 @@ export const CommandDock = ({ onShare }: CommandDockProps) => {
                   </div>
                 </div>
 
-                {/* Journey phases */}
-                <div className="space-y-2">
+                {/* Journey phases — workflow chips + named-phase progression */}
+                <div className="space-y-3">
                   <div className="font-mono text-[8px] font-black text-gray-500 uppercase tracking-widest">JOURNEY</div>
                   <JourneyTracker variant="mobile" />
+                  <JourneyPhaseProgress onNavigate={() => setMobileExpanded(false)} />
+                </div>
+
+                {/* Exposure radar — step-4 surface on viewports below lg (the SystemCard radar is desktop-only) */}
+                <div className="space-y-2">
+                  <div className="font-mono text-[8px] font-black text-gray-500 uppercase tracking-widest">EXPOSURE</div>
+                  <ThreatRadar values={radarValues} />
                 </div>
 
                 {/* Toggles grid */}

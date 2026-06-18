@@ -10,6 +10,7 @@ import { cn } from "./dossier-components";
 
 export function TerrainMap() {
   const actsRead = useDossierStore((s) => s.actsRead);
+  const markExplored = useDossierStore((s) => s.markExplored);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -75,8 +76,14 @@ export function TerrainMap() {
               type="button"
               disabled={!unlocked}
               aria-expanded={selectedId === node.id}
+              aria-label={unlocked ? `${node.label} — taught in ${node.taughtIn}` : `Locked — read ${node.taughtIn} to unlock`}
               data-testid={`terrain-node-${node.id}`}
-              onClick={() => setSelectedId(selectedId === node.id ? null : node.id)}
+              onClick={() => {
+                const next = selectedId === node.id ? null : node.id;
+                setSelectedId(next);
+                // Opening a node detail is a real interaction — score it (systemAwareness).
+                if (next) markExplored("node", node.id);
+              }}
               style={{ left: `${node.x}%`, top: `${node.y}%` }}
               className={cn(
                 "absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 group",

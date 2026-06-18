@@ -47,9 +47,10 @@ export function ScenarioPlayer({ scenario }: { scenario: OperationScenario }) {
 
   return (
     <section
+      id={`op-${scenario.id}`}
       aria-label={scenario.code}
       data-testid={`scenario-${scenario.id}`}
-      className="my-16 bg-white border-4 border-ink-black relative overflow-hidden"
+      className="my-16 bg-white border-4 border-ink-black relative overflow-hidden scroll-mt-32"
     >
       <div className="bg-ink-black text-white p-4 px-6 md:px-8 font-mono text-[10px] flex justify-between items-center">
         <span className="font-black uppercase tracking-[0.2em] flex items-center gap-3">

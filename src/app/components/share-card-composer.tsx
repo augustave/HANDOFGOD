@@ -33,7 +33,7 @@ export const ShareCardComposer = ({ text, isOpen, onClose }: ShareCardProps) => 
         <text x="30" y="38" font-family="monospace" font-size="14" fill="#FFFFFF" font-weight="bold">HAND_OF_GOD // DECLASSIFIED_FRAGMENT</text>
         <text x="30" y="120" font-family="serif" font-size="20" fill="#111111" font-style="italic">"${escapedText.substring(0, 200)}${escapedText.length > 200 ? '...' : ''}"</text>
         <line x1="30" y1="340" x2="570" y2="340" stroke="#111111" stroke-width="1" opacity="0.2" />
-        <text x="30" y="370" font-family="monospace" font-size="10" fill="#B01F2E" font-weight="bold">AUTH_REQ: SOVEREIGN_OPERATOR // DATE: 2026</text>
+        <text x="30" y="370" font-family="monospace" font-size="10" fill="#B01F2E" font-weight="bold">DECLASSIFIED_FRAGMENT // HAND_OF_GOD // 2026</text>
       </svg>
     `;
     const blob = new Blob([svgContent], { type: "image/svg+xml" });

@@ -16,6 +16,8 @@ export const createPreferencesSlice: StateCreator<StoreState, [], [], Preference
   setIsAudioMode: (v) => set({ isAudioMode: v }),
   setIsFocusMode: (v) => set({ isFocusMode: v }),
   setIsFullRead: (v) => set({ isFullRead: v }),
+  // Role is a presentation lens (reframes content via RoleLens / scenario framing),
+  // not a scored decision — intentionally excluded from the profile signal stream.
   setRole: (role) => set({ role }),
   setIsTerrainOpen: (v) => set({ isTerrainOpen: v }),
 });

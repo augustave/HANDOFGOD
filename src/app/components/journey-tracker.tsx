@@ -25,6 +25,7 @@ export function JourneyTracker({ variant }: { variant: "desktop" | "mobile" }) {
   const scenarioCommits = useDossierStore((s) => s.scenarioCommits);
   const committedPosture = useDossierStore((s) => s.committedPosture);
 
+  const operationsForDebrief = scenarioCommits.length + (committedPosture ? 1 : 0);
   const progress = {
     read: { done: actsRead.length, total: ESSAY_ACTS.length },
     assess: { done: responses.length, total: ASSESSMENT_QUESTIONS.length },
@@ -32,9 +33,21 @@ export function JourneyTracker({ variant }: { variant: "desktop" | "mobile" }) {
     debriefUnlocked: isDebriefUnlocked({
       actsReadCount: actsRead.length,
       responsesCount: responses.length,
-      operationsCount: scenarioCommits.length + (committedPosture ? 1 : 0),
+      operationsCount: operationsForDebrief,
     }),
   };
+
+  // DEBRIEF "why locked" is derived live from the same thresholds isDebriefUnlocked uses —
+  // never hand-duplicated, so the counts can't drift from the real gate.
+  const debriefReqs = [
+    { label: "READ", have: actsRead.length, need: 5 },
+    { label: "ASSESS", have: responses.length, need: 4 },
+    { label: "OPERATE", have: operationsForDebrief, need: 1 },
+  ];
+  const debriefReqsMet = debriefReqs.filter((r) => r.have >= r.need).length;
+  const debriefTooltip = progress.debriefUnlocked
+    ? "Open the strategic mirror"
+    : `LOCKED // ${debriefReqs.map((r) => `${r.label} ${Math.min(r.have, r.need)}/${r.need}`).join(" · ")}`;
 
   const jumpTo: Record<JourneyPhase, () => void> = {
     READ: () => {
@@ -58,7 +71,12 @@ export function JourneyTracker({ variant }: { variant: "desktop" | "mobile" }) {
     { phase: "READ", label: "READ", counter: `${progress.read.done}/${progress.read.total}` },
     { phase: "ASSESS", label: "ASSESS", counter: `${progress.assess.done}/${progress.assess.total}` },
     { phase: "OPERATE", label: "OPERATE", counter: `${progress.operate.done}/${progress.operate.total}` },
-    { phase: "DEBRIEF", label: "DEBRIEF", counter: "", locked: !progress.debriefUnlocked },
+    {
+      phase: "DEBRIEF",
+      label: "DEBRIEF",
+      counter: progress.debriefUnlocked ? "" : `${debriefReqsMet}/${debriefReqs.length}`,
+      locked: !progress.debriefUnlocked,
+    },
   ];
 
   return (
@@ -78,8 +96,8 @@ export function JourneyTracker({ variant }: { variant: "desktop" | "mobile" }) {
             key={chip.phase}
             aria-current={isActive ? "step" : undefined}
             title={
-              chip.locked
-                ? "LOCKED // read 5 sections, log 4 assessments, run 1 operation"
+              chip.phase === "DEBRIEF"
+                ? debriefTooltip
                 : `Jump to next ${chip.label.toLowerCase()} item`
             }
             onClick={() => {

@@ -3,7 +3,9 @@ import { AnimatePresence, motion } from "motion/react";
 import { Lock, Search } from "lucide-react";
 import { ACTS, SYSTEM_CARD_STATES } from "./data/dossier";
 import { hasPersistedSession, useDossierStore } from "./store";
-import { selectClearance } from "./store/selectors";
+import { selectClearance, selectPostureDistribution } from "./store/selectors";
+import { dominantPosture } from "./engine/posture";
+import { POSTURE_LABELS } from "./engine/weights";
 import { phaseForActId } from "./data/journey-phases";
 import { useAudioBriefing } from "./hooks/use-audio-briefing";
 import { useDossierProgress } from "./hooks/use-dossier-progress";
@@ -44,6 +46,7 @@ export default function App() {
   const role = useDossierStore((s) => s.role);
   const phase = useDossierStore((s) => s.phase);
   const clearance = useDossierStore(selectClearance);
+  const postureDistribution = useDossierStore(selectPostureDistribution);
   const [shareText, setShareText] = useState("");
   const [isShareOpen, setIsShareOpen] = useState(false);
   // Boot splash only on first-ever visits; returning sessions skip straight in.
@@ -267,7 +270,8 @@ export default function App() {
 
       <CommandDock
         onShare={() => {
-          setShareText(`[DOSSIER_SUMMARY] Active Act: AX-0${activeAct} // Phase: ${phase} // Role: ${role}. Posture: SOVEREIGN.`);
+          const posture = POSTURE_LABELS[dominantPosture(postureDistribution)].toUpperCase();
+          setShareText(`[DOSSIER_SUMMARY] Active Act: AX-0${activeAct} // Phase: ${phase} // Role: ${role}. Posture: ${posture}.`);
           setIsShareOpen(true);
         }}
       />

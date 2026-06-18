@@ -70,6 +70,9 @@ export const createOperationsSlice: StateCreator<StoreState, [], [], OperationsS
       };
     }),
 
+  // Posture commit is affinity-only by design: it shifts the posture
+  // distribution (POSTURE_COMMIT_BONUS) but carries no dimension weights, so the
+  // 6-axis literacy profile is unchanged. The signal is flagged affinityOnly.
   commitPosture: (posture, callsign) =>
     set((state) => ({
       committedPosture: posture,

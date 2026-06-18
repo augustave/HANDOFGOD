@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Terminal, Shield, Eye, Zap, CheckCircle2, ArrowRight, Lock } from "lucide-react";
+import { Terminal, Shield, Eye, Zap, CheckCircle2, ArrowRight } from "lucide-react";
 import { POSTURES, type Posture as PostureId } from "../engine/weights";
 import { useDossierStore } from "../store";
 import { cn } from "./dossier-components";
@@ -50,6 +50,7 @@ export function PostureTerminal() {
   const [isSigned, setIsSigned] = useState(false);
   const [signature, setSignature] = useState("");
   const commitPosture = useDossierStore((s) => s.commitPosture);
+  const sessionId = useDossierStore((s) => s.sessionId);
 
   const commit = () => {
     if (selectedId !== null && isPostureId(selectedId)) {
@@ -63,11 +64,10 @@ export function PostureTerminal() {
       <div className="bg-ink-black text-white p-4 font-mono text-[10px] flex justify-between items-center px-8">
         <div className="flex items-center gap-3">
           <Terminal className="w-4 h-4 text-star-gold" />
-          <span className="font-black uppercase tracking-[0.2em]">OPERATIONAL_POSTURE_TERMINAL_V2.6</span>
+          <span className="font-black uppercase tracking-[0.2em]">OPERATIONAL_POSTURE_TERMINAL</span>
         </div>
         <div className="flex items-center gap-4 opacity-50">
-          <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> ENCRYPTED</span>
-          <span>SESS_ID: 9942-AX</span>
+          <span>SESS_ID: {sessionId}</span>
         </div>
       </div>
 

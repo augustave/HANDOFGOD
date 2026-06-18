@@ -8,21 +8,32 @@ import { Lock, Map as MapIcon, X } from "lucide-react";
 import { TERRAIN_EDGES, TERRAIN_NODES, type TerrainNode } from "../data/terrain";
 import { JOURNEY_PHASES } from "../data/journey-phases";
 import { useDossierStore } from "../store";
+import { JourneyPhaseProgress } from "./journey-phase-progress";
 import { cn } from "./dossier-components";
 
 export function TerrainOverlay() {
   const open = useDossierStore((s) => s.isTerrainOpen);
   const setOpen = useDossierStore((s) => s.setIsTerrainOpen);
   const actsRead = useDossierStore((s) => s.actsRead);
+  const markExplored = useDossierStore((s) => s.markExplored);
+  const setIsFullRead = useDossierStore((s) => s.setIsFullRead);
 
   const isUnlocked = (node: TerrainNode) => actsRead.includes(node.unlockActIndex);
 
   const navigate = (node: TerrainNode) => {
     if (!isUnlocked(node)) return;
+    // Opening a node is a real interaction — score it (systemAwareness).
+    markExplored("node", node.id);
     setOpen(false);
     const phase = JOURNEY_PHASES.find((p) => p.actIndex === node.unlockActIndex);
     if (phase) {
-      document.getElementById(`act-${phase.actId}`)?.scrollIntoView({ behavior: "smooth" });
+      // Anchors are absent in full-read mode; leave it, then scroll after remount.
+      setIsFullRead(false);
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          document.getElementById(`act-${phase.actId}`)?.scrollIntoView({ behavior: "smooth" });
+        }),
+      );
     }
   };
 
@@ -94,6 +105,7 @@ export function TerrainOverlay() {
                       unlocked ? "cursor-pointer group" : "cursor-not-allowed",
                     )}
                     title={unlocked ? `Go to ${node.taughtIn}` : `LOCKED // READ ${node.taughtIn}`}
+                    aria-label={unlocked ? `Go to ${node.label} (${node.taughtIn})` : `Locked — read ${node.taughtIn} to unlock`}
                   >
                     <span
                       className={cn(
@@ -118,46 +130,9 @@ export function TerrainOverlay() {
               })}
             </div>
 
-            {/* Progress narrative — named phases */}
+            {/* Progress narrative — named phases (shared with the mobile dock) */}
             <div className="mt-10">
-              <h3 className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-star-gold mb-4">
-                JOURNEY_PROGRESSION
-              </h3>
-              <ol className="space-y-2">
-                {JOURNEY_PHASES.map((phase) => {
-                  const complete = actsRead.includes(phase.actIndex);
-                  const firstIncompleteIdx = JOURNEY_PHASES.find((p) => !actsRead.includes(p.actIndex))?.actIndex;
-                  const active = !complete && phase.actIndex === firstIncompleteIdx;
-                  const state = complete ? "COMPLETE" : active ? "ACTIVE" : "LOCKED";
-                  return (
-                    <li key={phase.actId}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOpen(false);
-                          document.getElementById(`act-${phase.actId}`)?.scrollIntoView({ behavior: "smooth" });
-                        }}
-                        className="w-full flex items-center justify-between gap-4 border border-white/10 px-4 py-3 text-left cursor-pointer hover:border-star-gold/50 transition-colors"
-                      >
-                        <span className="font-mono text-[10px] font-black uppercase tracking-widest text-white/50">
-                          {phase.code}
-                        </span>
-                        <span className="flex-1 font-mono text-sm font-black uppercase tracking-tight text-white">
-                          {phase.name}
-                        </span>
-                        <span
-                          className={cn(
-                            "font-mono text-[9px] font-black uppercase tracking-widest",
-                            complete ? "text-green-500" : active ? "text-star-gold" : "text-white/30",
-                          )}
-                        >
-                          {state}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
+              <JourneyPhaseProgress onNavigate={() => setOpen(false)} />
             </div>
           </div>
         </motion.div>

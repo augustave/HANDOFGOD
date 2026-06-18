@@ -433,7 +433,7 @@ export function CommandPalette({
               </span>
             </div>
             <div className="flex items-center gap-1">
-              <Shield className="w-2 h-2" /> <span>ENCRYPTED_QUERY_MODE</span>
+              <span>LOCAL_COMMAND_INDEX</span>
             </div>
           </div>
         </motion.div>
