@@ -5,20 +5,17 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Shield, Activity, Target, Zap, Cpu, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
+import { Shield, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 import { cn } from "./dossier-components";
 import { ThreatRadar } from "./threat-radar";
 import { useDossierStore } from "../store";
 import { DIMENSION_LABELS, type Dimension } from "../engine/weights";
-import type { SecurityRole, SystemCardState } from "../types";
+import type { SecurityRole } from "../types";
 
 interface SystemCardProps {
   activeAct: number;
   role: SecurityRole;
-  data: SystemCardState[];
 }
-
-type RowStatus = "STABLE" | "NOMINAL" | "EXPOSED" | "MONITORING" | "DEPLOYED" | "TRACKING";
 
 interface SignalEntry {
   at: number;
@@ -48,8 +45,7 @@ function weightSummary(weights: Readonly<Partial<Record<Dimension, number>>>): s
     .join(", ");
 }
 
-export const SystemCard = ({ activeAct, role, data }: SystemCardProps) => {
-  const current = data[activeAct] || data[0];
+export const SystemCard = ({ activeAct, role }: SystemCardProps) => {
   const [isRadarExpanded, setIsRadarExpanded] = useState(true);
   const profile = useDossierStore((s) => s.profile);
   const responses = useDossierStore((s) => s.responses);
@@ -86,23 +82,6 @@ export const SystemCard = ({ activeAct, role, data }: SystemCardProps) => {
     return entries.sort((a, b) => b.at - a.at).slice(0, 12);
   }, [responses, scenarioCommits, simulatorReports]);
 
-  const rows = [
-    { label: "ASSET", val: current.asset, icon: Cpu, status: "STABLE" as const },
-    { label: "SURFACE", val: current.surface, icon: Shield, status: (activeAct > 4 ? "EXPOSED" : "NOMINAL") as RowStatus },
-    { label: "FAILURE", val: current.failure, icon: Target, status: "MONITORING" as const },
-    { label: "CONTROLS", val: current.controls, icon: Zap, status: "DEPLOYED" as const },
-    { label: "METRIC", val: current.metric, icon: Activity, status: "TRACKING" as const },
-  ];
-
-  const statusColors: Record<string, string> = {
-    STABLE: "text-green-500",
-    NOMINAL: "text-green-500",
-    EXPOSED: "text-stamp-red",
-    MONITORING: "text-orange-500",
-    DEPLOYED: "text-dossier-blue",
-    TRACKING: "text-star-gold",
-  };
-
   const toneColors: Record<SignalEntry["tone"], string> = {
     info: "text-gray-400",
     success: "text-green-500/80",
@@ -131,42 +110,6 @@ export const SystemCard = ({ activeAct, role, data }: SystemCardProps) => {
           <span>ACT: AX-0{activeAct}</span>
           <span>SIGNALS: {responses.length + scenarioCommits.length + simulatorReports.length}</span>
         </div>
-      </div>
-
-      {/* Data Rows */}
-      <div className="px-6 pb-4 space-y-0 relative z-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeAct}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-0"
-          >
-            {rows.map((row) => (
-              <div key={row.label} className="group border-b border-white/5 py-3 last:border-0">
-                <div className="flex justify-between items-center mb-1">
-                  <div className="flex items-center gap-2">
-                    <row.icon className="w-3 h-3 text-star-gold opacity-50" />
-                    <div className="font-mono text-[9px] text-gray-400 font-black tracking-widest uppercase">{row.label}</div>
-                  </div>
-                  <div
-                    className={cn(
-                      "font-mono text-[8px] font-black px-1 py-0.5 border border-current/30",
-                      statusColors[row.status] || "text-gray-400",
-                    )}
-                  >
-                    {row.status}
-                  </div>
-                </div>
-                <div className="font-mono text-[10px] font-black uppercase tracking-tight group-hover:text-star-gold transition-colors truncate">
-                  {row.val}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
       </div>
 
       {/* Exposure Radar */}

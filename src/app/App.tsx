@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Lock, Search } from "lucide-react";
-import { ACTS, SYSTEM_CARD_STATES } from "./data/dossier";
+import { ACTS } from "./data/dossier";
 import { hasPersistedSession, useDossierStore } from "./store";
 import { selectClearance, selectPostureDistribution } from "./store/selectors";
 import { dominantPosture } from "./engine/posture";
@@ -263,7 +263,7 @@ export default function App() {
 
         {!isFocusMode && !isFullRead && (
           <aside className="hidden lg:flex justify-end xl:translate-x-6 2xl:translate-x-10 transition-transform duration-500">
-            <SystemCard activeAct={activeAct} role={role} data={SYSTEM_CARD_STATES} />
+            <SystemCard activeAct={activeAct} role={role} />
           </aside>
         )}
       </main>
